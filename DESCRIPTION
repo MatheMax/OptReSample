@@ -1,0 +1,19 @@
+Package: AdReSample
+Type: Package
+Title: Computing Optimal Adaptive Designs
+Version: 0.1.0
+Author: Maximilian Pilz
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+  rootSolve,
+  nloptr,
+  ggplot2,
+  devtools,
+  roxygen2
+Suggests: testthat
+RoxygenNote: 6.0.1
