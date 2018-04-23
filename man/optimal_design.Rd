@@ -31,12 +31,13 @@ An object of class \link{design}
 \code{optimal_design} returns an optimal two-stage adaptive design.
 }
 \details{
-The optimality criterion is given as the expected sample size under the null hypothesis.
-If \code{standardized=T}, the values of \code{effect_null} and {sd} are set to their default, even if they were specified.
+The optimality criterion is given as the expected sample size under the alternative hypothesis.
+If \code{standardized=T}, the values of \code{effect_null} and \code{sd} are set to their default,
+even if they were specified differently.
 
 The use of a t-approximation (\code{t_approx=T}) or a Lagrangian approach (\code{lagrange=T}) yields more precise results,
 but makes the calculation slowlier.
 
-Note that there is no Lagrangian implementation of the t_approxmation. Hence, the value of \code{lagrange} will be
+Note that there is no Lagrangian implementation of the t-approximation. Hence, the value of \code{lagrange} will be
 ignored, if \code{t_approx} is set to \code{T}.
 }

@@ -24,6 +24,11 @@
 
 
 optimal_design <- function(effect, alpha, pow, effect_null=0, sd=1, standardized=T, t_approx=F, lagrange=T) {
+  if(alpha <=0 || alpha >=1 || pow <= 0 || pow >= 1){
+    return("Probabilities have to be between 0 and 1!")
+    break
+  }
+
   beta <- 1 - pow
 
   if(standardized == F){
