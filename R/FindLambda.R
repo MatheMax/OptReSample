@@ -12,30 +12,29 @@
 #'
 #' @return A two-dimensional vector which gives the deviation of type I resp. type II error.
 
-err <- function(parameters,lambda1,lambda2) {
+err <- function(parameters, lambda1, lambda2) {
 
-  n1 <- n1(parameters,lambda1,lambda2)
-  c <- c_early(parameters,n1,lambda1,lambda2)
+  n1 <- n1(parameters, lambda1, lambda2)
+  c <- c_early(parameters, n1, lambda1, lambda2)
   cf <- c[1]
   ce <- c[2]
 
 
   dis = (ce - cf)
   h = dis/10
-  x = seq(cf,ce,h)
-  alpha=c(1,rep(2,9),1)
-  y1=rep(0,11)
-  y2=rep(0,11)
+  x = seq(cf, ce, h)
+  alpha = c(1, rep(2, 9), 1)
+  y1 = rep(0, 11)
+  y2 = rep(0, 11)
   for(i in 1:11){
-    n2 <-  response(parameters,n1,lambda1,lambda2,x[i])
-   # n2 <- n2(parameters,x[i],n1,lambda1,lambda2,cf,ce)
-    c2 <- ( a(parameters)^2 * n2 - b(parameters,x[i],n1,lambda1,lambda2) ) / ( 2 * a(parameters) * sqrt(abs(n2)) )
+    n2 <-  response(parameters, n1, lambda1, lambda2, x[i])
+    c2 <- ( parameters$mu^2 * n2 - b(parameters, x[i], n1, lambda1, lambda2) ) / ( 2 * parameters$mu * sqrt(abs(n2)) )
 
     y1[i] = pnorm( c2 ) * dnorm( x[i] )
-    y2[i] = pnorm( c2 - sqrt(abs(n2)) * a(parameters)) * dnorm( x[i] - sqrt( n1 ) * a(parameters) )
+    y2[i] = pnorm( c2 - sqrt(abs(n2)) * parameters$mu) * dnorm( x[i] - sqrt( n1 ) * parameters$mu )
   }
   q <- (h/2)*(t(alpha)%*%y2)
-  q <- 1 - pnorm ( cf - sqrt( n1 ) * a(parameters) ) - q
+  q <- 1 - pnorm ( cf - sqrt( n1 ) * parameters$mu ) - q
 
   p <- (h/2)*(t(alpha)%*%y1)
   p <- 1 - pnorm(cf) - p
@@ -57,16 +56,16 @@ err <- function(parameters,lambda1,lambda2) {
 #' @param parameters Parameters specifying the design.
 
 lambda_start <- function(parameters){
-  if( a(parameters)>0.5 ){
+  if( parameters$mu>0.5 ){
     l2 <- 25
-  } else if( a(parameters)>0.4 ){
+  } else if( parameters$mu>0.4 ){
     l2 <- 2000 * parameters$alpha
-  } else if( a(parameters)>0.3 ){
+  } else if( parameters$mu>0.3 ){
     l2 <- max( 150 - 1500 * parameters$alpha, 1)
-  } else if( a(parameters)>0.2 ){
+  } else if( parameters$mu>0.2 ){
     l2 <- max( 200 - 1500 * parameters$alpha, 1)
   } else{
-    l2 <- 300 * ( 1 + (0.2 - a(parameters)) * 10 )^2
+    l2 <- 300 * ( 1 + (0.2 - parameters$mu) * 10 )^2
   }
 
   ratio <- parameters$beta / parameters$alpha
@@ -91,7 +90,7 @@ lambda_start <- function(parameters){
     l1 <- as.numeric( g(ratio) * l2 )
   }
 
-  return(c(l1,l2))
+  return(c(l1, l2))
 
 }
 
@@ -110,8 +109,8 @@ lambda_start <- function(parameters){
 find_lambda <- function(parameters){
   l <- lambda_start(parameters)
 
-  err_opt<-function(lambda1,lambda2){err(parameters,lambda1,lambda2)}
-  opt <- rootSolve::multiroot(function(x) err_opt(x[1],x[2]),c(l[1],l[2]))
+  err_opt<-function(lambda1, lambda2){err(parameters, lambda1, lambda2)}
+  opt <- rootSolve::multiroot(function(x) err_opt(x[1], x[2]), c(l[1], l[2]))
 
   return(opt$root)
 }
@@ -135,14 +134,14 @@ find_lambda_direct <- function(parameters){
   l <- lambda_start(parameters)
 
   f <- function(lambda1,lambda2){
-    c <- c_early(parameters,d$n1,lambda1,lambda2)
+    c <- c_early(parameters, d$n1, lambda1, lambda2)
     p = rep(0,2)
     p[1] = d$cf - c[1]
     p[2] = d$ce - c[2]
     return(p)
     }
 
-  opt <- rootSolve::multiroot(function(x) f(x[1],x[2]),c(l[1],l[2]))
+  opt <- rootSolve::multiroot(function(x) f(x[1], x[2]), c(l[1], l[2]))
 
   return(opt$root)
 

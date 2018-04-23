@@ -9,7 +9,7 @@
 #' @param N 4N+1 gives the number of nodes
 #' @param w nodes inside the interval (cf,ce)
 
-score_direct_smooth <- function(parameters,n1,n2,h,N,w){
+score_direct_smooth <- function(parameters, n1, n2, h, N, w){
 
   omega=rep(0,4*N+1)
   omega[1]=7
@@ -18,7 +18,7 @@ score_direct_smooth <- function(parameters,n1,n2,h,N,w){
   omega[4*N+1]=7
   y=rep(0,4*N+1)
   for(i in 1:(4*N+1)){
-    y[i] <- n2[i] * dnorm( w[i] - sqrt(n1)*a(parameters) )
+    y[i] <- n2[i] * dnorm( w[i] - sqrt(n1) * parameters$mu )
   }
   p <- (2*h)/45*(t(omega)%*%y)
 
@@ -36,7 +36,7 @@ score_direct_smooth <- function(parameters,n1,n2,h,N,w){
 #' @param ce Boundary for stopping for efficacy
 #' @param n1 Stage one sample size
 
-score_smooth <- function(parameters,cf,ce,n1){
+score_smooth <- function(parameters, cf, ce, n1){
   N=3
   h=(ce-cf)/(4*N)
   w <- seq(cf,ce,h)
@@ -63,7 +63,7 @@ score_smooth <- function(parameters,cf,ce,n1){
 #' @param w nodes inside the interval (cf,ce)
 
 
-type_one_smooth <- function(parameters,cf,c2,h,N,w){
+type_one_smooth <- function(parameters, cf, c2, h, N, w){
 
   omega=rep(0,4*N+1)
   omega[1]=7
@@ -96,7 +96,7 @@ type_one_smooth <- function(parameters,cf,c2,h,N,w){
 #' @param w nodes inside the interval (cf,ce)
 
 
-type_two_smooth <- function(parameters,cf,c2,n1,n2,h,N,w){
+type_two_smooth <- function(parameters, cf, c2, n1, n2, h, N, w){
 
   omega=rep(0,4*N+1)
   omega[1]=7
@@ -105,11 +105,11 @@ type_two_smooth <- function(parameters,cf,c2,n1,n2,h,N,w){
   omega[4*N+1]=7
   y=rep(0,4*N+1)
   for(i in 1:(4*N+1)){
-    y[i] <- pnorm(c2[i] - sqrt(abs(n2[i])) * a(parameters) ) * dnorm(w[i] - sqrt(n1) * a(parameters))
+    y[i] <- pnorm(c2[i] - sqrt(abs(n2[i])) * parameters$mu ) * dnorm(w[i] - sqrt(n1) * parameters$mu)
   }
   p <- (2*h)/45*(t(omega)%*%y)
 
-  p <- p + pnorm(cf - sqrt(n1) * a(parameters))
+  p <- p + pnorm(cf - sqrt(n1) * parameters$mu)
   return(p)
 }
 
@@ -130,20 +130,20 @@ type_two_smooth <- function(parameters,cf,c2,n1,n2,h,N,w){
 #' @return A vector. The first half give the c_2, and the second the n_2-values, on a equidistance grid inside the
 #' interval (cf,ce).
 
-stage_two <- function(parameters,cf,ce,n1){
+stage_two <- function(parameters, cf, ce, n1){
 
   N=3
   h=(ce-cf)/(4*N)
-  w <- seq(cf,ce,h)
+  w <- seq(cf, ce, h)
 
   k <- optimal_gsd(parameters)
   start_n2 <- rep( ceiling( k$n2( k$cf + (k$ce-k$cf) / 2 ) ) , length(w) )
   start_c2 <- rep( k$c2( k$cf + (k$ce-k$cf) / 2 ) , length(w) )
 
 
-  score_min <- function(n2){ score_direct_smooth(parameters,n1,n2,h,N,w) }
-  t_1 <- function(c2){ type_one_smooth(parameters,cf,c2,h,N,w) }
-  t_2 <- function(c2,n2){ type_two_smooth(parameters,cf,c2,n1,n2,h,N,w) }
+  score_min <- function(n2){ score_direct_smooth(parameters, n1, n2, h, N, w) }
+  t_1 <- function(c2){ type_one_smooth(parameters, cf, c2, h, N, w) }
+  t_2 <- function(c2, n2){ type_two_smooth(parameters, cf, c2, n1, n2, h, N, w) }
 
   optimum <- nloptr::nloptr(
     x0          = c(start_c2,start_n2),
@@ -159,13 +159,13 @@ stage_two <- function(parameters,cf,ce,n1){
     )
   )
 
-  c2<-optimum$solution[1:length(w)]
+  c2 <- optimum$solution[1:length(w)]
   n2 <- optimum$solution[(length(w)+1) : (2*length(w))]
 
   r1 <- t_1(c2) / parameters$alpha
   r2 <- t_2(c2,optimum$solution[(length(w)+1) : (2*length(w))]) / parameters$beta
 
-  if(abs(1-r1)<0.05 && abs(1-r2)<0.05){ n2 <- optimum$solution[(length(w)+1) : (2*length(w))]}
+  if(abs(1-r1)<0.05 && abs(1-r2) < 0.05){ n2 <- optimum$solution[(length(w)+1) : (2*length(w))]}
   else{n2 <- rep(99999,length(w))}
 
   return(c(c2,n2))

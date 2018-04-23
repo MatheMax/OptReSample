@@ -12,15 +12,15 @@
 #' @return An object of class \code{design}
 
 
-lagrange_design <- function (parameters,lambda1,lambda2) {
-  n1 <- n1(parameters,lambda1,lambda2)
-  c <- c_early(parameters,n1,lambda1,lambda2)
+lagrange_design <- function(parameters, lambda1, lambda2) {
+  n1 <- n1(parameters, lambda1, lambda2)
+  c <- c_early(parameters, n1, lambda1, lambda2)
   cf <- c[1]
   ce <- c[2]
-  n2_out <- function(z){n2(parameters,z,n1,lambda1,lambda2,cf,ce)}
-  c2_out <- function(z){c2(parameters,z,n1,lambda1,lambda2,cf,ce)}
+  n2_out <- function(z){ n2(parameters, z, n1, lambda1, lambda2, cf, ce) }
+  c2_out <- function(z){ c2(parameters, z, n1, lambda1, lambda2, cf, ce) }
 
-  d <- design(cf,ce,n1,n2_out,c2_out)
+  d <- design(cf, ce, n1, n2_out, c2_out)
   return(d)
 }
 

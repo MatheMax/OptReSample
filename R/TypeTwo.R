@@ -15,9 +15,9 @@
 
 
 
-type_two <- function(parameters,cf,ce,nodes,c2,n1,n2){
-  f <- splinefun(nodes,c2)
-  g <- splinefun(nodes,n2)
+type_two <- function(parameters, cf, ce, nodes, c2, n1, n2){
+  f <- splinefun(nodes, c2)
+  g <- splinefun(nodes, n2)
   N=12
   h = (ce - cf) / N
   x = seq(cf,ce,h)
@@ -25,10 +25,10 @@ type_two <- function(parameters,cf,ce,nodes,c2,n1,n2){
 
   y=rep(0,(N+1))
   for(i in 1:(N+1)){
-    y[i] = pnorm( f(x[i]) - sqrt(abs(g(x[i])))  * a(parameters) )
-    y[i] = y[i] * dnorm( x[i] - sqrt(abs(n1))  * a(parameters) )
+    y[i] = pnorm( f(x[i]) - sqrt(abs(g(x[i])))  * parameters$mu )
+    y[i] = y[i] * dnorm( x[i] - sqrt(abs(n1))  * parameters$mu )
   }
   p <- (h/2)*(t(alpha)%*%y)
-  p <- p + pnorm( cf - sqrt(abs(n1)) * a(parameters) )
+  p <- p + pnorm( cf - sqrt(abs(n1)) * parameters$mu )
   return(p)
 }

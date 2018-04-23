@@ -12,7 +12,7 @@
 #' @return An object of class design.
 
 direct_design_smooth <- function (parameters){
-  s_min <- function(cf,ce,n1){ score_smooth(parameters,cf,ce,n1) }
+  s_min <- function(cf, ce, n1){ score_smooth(parameters, cf, ce, n1) }
 
   k <- optimal_gsd(parameters)
   start_cf <- k$cf
@@ -25,7 +25,7 @@ direct_design_smooth <- function (parameters){
 
   optimum <- nloptr::nloptr(
     x0          = c( start_cf, start_ce, start_n1 ),
-    eval_f      = function(x) s_min(x[1],x[2],x[3]),
+    eval_f      = function(x) s_min(x[1], x[2], x[3]),
     lb = low,
     ub = up,
     opts = list(
@@ -46,7 +46,7 @@ direct_design_smooth <- function (parameters){
   c2 <- s2[1:(length(s2)/2)]
   n2 <- s2[(length(s2)/2+1):length(s2)]
   dis <- (round(ce,1)-round(cf,1))/(length(n2)-1)
-  u <- seq(round(cf,1),round(ce,1),dis)
+  u <- seq(round(cf,1), round(ce,1), dis)
 
   n2_out <- function(z){
     spl <- splinefun(u,n2)

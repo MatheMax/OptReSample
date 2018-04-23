@@ -2,7 +2,7 @@
 % Please edit documentation in R/help_functions.R
 \name{b}
 \alias{b}
-\title{The value b as defined in the manuscript}
+\title{A simplified version of the function b that is defined in the manuscript}
 \usage{
 b(parameters, z, n1, lambda1, lambda2)
 }

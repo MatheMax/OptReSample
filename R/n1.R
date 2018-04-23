@@ -6,13 +6,13 @@
 #' @param lambda1,lambda2 The Lagrange penalization parameters
 
 
-n1 <- function(parameters,lambda1,lambda2){
+n1 <- function(parameters, lambda1, lambda2){
   s <- function(n){
     c <- c_early(parameters,n,lambda1,lambda2)
-    p <- score(parameters,c[1],c[2],n,lambda1,lambda2)
+    p <- score(parameters, c[1], c[2], n, lambda1, lambda2)
     return(p)
   }
-  start <- (fixed(parameters)[1])/2
+  start <- (fixed(parameters)[1]) / 2
   opt <- nloptr::nloptr(
     x0        =  start,
     eval_f  = function(x) { s(x) },

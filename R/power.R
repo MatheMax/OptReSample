@@ -8,10 +8,8 @@
 #' @param d An object of class \code{design}.
 #' @param parameters Parameters speficying the situation. See \link{parameters} for details.
 
-real_power<-function(effect,d,parameters){
-  mualt=effect #the true effect size
-  mu0=parameters$mu0
-  sigma=parameters$sigma
+real_power<-function(effect, d, parameters){
+  mualt=effect #the true standardized effect size
 
   n1 <- d$n1
   cf <- d$cf
@@ -30,10 +28,10 @@ real_power<-function(effect,d,parameters){
   for(i in 1:(4*N+1)){
     n <- as.numeric(d$n2(x[i]))
     c <- as.numeric(d$c2(x[i]))
-    y[i] = pnorm( c - sqrt(abs(n)) * (mualt-mu0)/sigma ) * dnorm( x[i] - sqrt(abs(n1)) * (mualt-mu0)/sigma )
+    y[i] = pnorm( c - sqrt(abs(n)) * mualt ) * dnorm( x[i] - sqrt(abs(n1)) * mualt )
   }
   p <- (2*h)/45*(t(omega)%*%y)
-  f <- 1 - pnorm ( cf - sqrt(abs(n1)) * (mualt-mu0)/sigma ) - p
+  f <- 1 - pnorm ( cf - sqrt(abs(n1)) * mualt ) - p
   return(f)
 }
 
@@ -47,28 +45,25 @@ real_power<-function(effect,d,parameters){
 #' @param parameters Parameters speficying the situation. See \link{parameters} for details.
 
 
-plot_power<-function(d,parameters){
-  mu0=parameters$mu0
-  nu=parameters$mualt
-  dis=(nu-mu0)/20
-  z = seq(mu0-5*dis,1.5*nu,dis)
+plot_power<-function(d, parameters){
+  nu = parameters$mu
+  z = seq( -0.25*nu, 1.5*nu, nu/20)
   y = rep(0,length(z))
   for(i in 1:length(z)){
-   y[i] <- real_power(z[i],d,parameters)
+   y[i] <- real_power(z[i], d, parameters)
   }
-  out <- data.frame(data.matrix(cbind(z,y)))
+  out <- data.frame(data.matrix(cbind(z, y)))
   names(out)<-c("true effect","power")
-  ggplot2::ggplot(out,ggplot2::aes(z, y)) +
+  ggplot2::ggplot(out,ggplot2::aes(z, y) ) +
     ggplot2::geom_line() +
     ggplot2::geom_hline(yintercept = 1-parameters$beta, color = "red") +
-    ggplot2::geom_vline(xintercept = parameters$mualt, color = "blue") +
+    ggplot2::geom_vline(xintercept = parameters$mu, color = "blue") +
     ggplot2::scale_x_continuous("true effect", breaks = seq(0, 10, .1)) +
     ggplot2::labs(title="Power",x="true effect",y="power")+
     ggplot2::theme_bw() +
     ggplot2::theme(
       panel.grid = ggplot2::element_blank()
     )
-
 }
 
 
@@ -81,6 +76,6 @@ plot_power<-function(d,parameters){
 #' @param d An object of class \code{design}.
 #' @param parameters Parameters speficying the situation. See \link{parameters} for details.
 
-opt_power <- function(d,parameters) {
-  real_power(parameters$mualt,d,parameters)
+opt_power <- function(d, parameters) {
+  real_power(parameters$mu, d, parameters)
 }

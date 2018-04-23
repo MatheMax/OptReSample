@@ -17,7 +17,7 @@ direct_design <- function(parameters){
   max <- 4.5
   dis <- 0.5
 
-  nodes=seq(min,max,dis)
+  nodes = seq(min, max, dis)
 
 
    # Startwerte
@@ -26,22 +26,22 @@ direct_design <- function(parameters){
    start_ce <- fixed(parameters)[2]
    start_c2<- seq(2.5,0,-2.5/(length(nodes)-1))
    start_n2 <- seq(60,10,-50/(length(nodes)-1))
-   start <- c(start_cf,start_ce,start_c2,start_n1,start_n2)
+   start <- c(start_cf, start_ce, start_c2, start_n1, start_n2)
 
-   low <- c( min+0.1, qnorm(1-parameters$alpha)-dis, rep((min+0.1),length(nodes)), rep(1,length(nodes)+1) )
-   up <- c( qnorm(1-parameters$alpha), max-0.1, rep((max-0.1),length(nodes)), rep(Inf,length(nodes)+1) )
+   low <- c( min+0.1, qnorm(1-parameters$alpha) - dis, rep((min+0.1), length(nodes)), rep(1, length(nodes)+1) )
+   up <- c( qnorm(1-parameters$alpha), max-0.1, rep((max-0.1), length(nodes)), rep(Inf, length(nodes)+1) )
 
 
-    score_min <- function(cf,ce,c2,n1,n2){ score_direct(parameters,cf,ce,nodes,c2,n1,n2) }
-    t_1 <- function(cf,ce,c2){ type_one(parameters,cf,ce,nodes,c2) }
-    t_2 <- function(cf,ce,c2,n1,n2){ type_two(parameters,cf,ce,nodes,c2,n1,n2) }
+    score_min <- function(cf, ce, c2, n1, n2){ score_direct(parameters, cf, ce, nodes, c2, n1, n2) }
+    t_1 <- function(cf, ce, c2){ type_one(parameters, cf, ce, nodes, c2) }
+    t_2 <- function(cf, ce, c2, n1, n2){ type_two(parameters, cf, ce, nodes, c2, n1, n2) }
 
   optimum <- nloptr::nloptr(
     x0          = start,
-    eval_f      = function(x) score_min(x[1],x[2],x[3:(length(nodes)+2)],x[length(nodes)+3],x[(length(nodes)+4) : length(start)]),
+    eval_f      = function(x) score_min(x[1], x[2], x[3:(length(nodes)+2)], x[length(nodes)+3], x[(length(nodes)+4) : length(start)]),
     eval_g_ineq = function(x) { return( c( #x[1] + 0.01 - x[2] ,
-                                  t_1(x[1],x[2],x[3:(length(nodes)+2)]) - parameters$alpha,
-                                  t_2(x[1],x[2],x[3:(length(nodes)+2)],x[length(nodes)+3],x[(length(nodes)+4) : length(start)]) - parameters$beta )) },
+                                  t_1(x[1], x[2], x[3:(length(nodes)+2)]) - parameters$alpha,
+                                  t_2(x[1], x[2], x[3:(length(nodes)+2)], x[length(nodes)+3], x[(length(nodes)+4) : length(start)]) - parameters$beta )) },
     lb = low,
     ub = up,
     opts = list(

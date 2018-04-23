@@ -12,8 +12,8 @@
 #' @param n2 n_2 values on the nodes
 #' @param w nodes
 
-t_score <- function(parameters,cf,ce,c2,n1,n2,w){
-  g <- splinefun(w,n2)
+t_score <- function(parameters, cf, ce, c2, n1, n2, w){
+  g <- splinefun(w, n2)
 
   N=12
 
@@ -24,7 +24,7 @@ t_score <- function(parameters,cf,ce,c2,n1,n2,w){
   y=rep(0,(N+1))
   for(i in 1:(N+1)){
     alpha[i] = alpha[i] * g(x[i])
-    y[i] <- dt( x[i], df=n1-1, ncp=sqrt(n1)*a(parameters) )
+    y[i] <- dt( x[i], df=n1-1, ncp = sqrt(n1) * parameters$mu )
   }
   p <- (h/2)*(t(alpha)%*%y)
   p <- p + n1

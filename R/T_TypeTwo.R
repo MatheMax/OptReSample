@@ -12,7 +12,7 @@
 #' @param n2 n_2 values on the nodes
 #' @param w nodes
 
-t_type_two <- function(parameters,cf,ce,c2,n1,n2,w){
+t_type_two <- function(parameters, cf, ce, c2, n1, n2, w){
   f <- splinefun(w,c2)
   g <- splinefun(w,n2)
   N=12
@@ -22,10 +22,10 @@ t_type_two <- function(parameters,cf,ce,c2,n1,n2,w){
 
   y=rep(0,(N+1))
   for(i in 1:(N+1)){
-    y[i] = pt( f(x[i]), df = max(g(x[i])-1,1) , ncp=sqrt(g(x[i]))*a(parameters) )
-    y[i] = y[i] * dt( x[i], df=n1-1, ncp=sqrt(n1)*a(parameters) )
+    y[i] = pt( f(x[i]), df = max(g(x[i])-1,1) , ncp = sqrt(g(x[i]))*parameters$mu )
+    y[i] = y[i] * dt( x[i], df=n1-1, ncp = sqrt(n1)*parameters$mu )
   }
   p <- (h/2)*(t(alpha)%*%y)
-  p <- p + pt( cf, df=n1-1, ncp=sqrt(n1)*a(parameters) )
+  p <- p + pt( cf, df=n1-1, ncp = sqrt(n1)*parameters$mu )
   return(p)
 }

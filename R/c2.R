@@ -10,28 +10,17 @@
 #'   @param cf Boundary for stopping for futility
 #'   @param ce Boundary for stopping for efficacy
 
-c2 <- function(parameters,z,n1,lambda1,lambda2,cf,ce){
-  N=20
-  no <- nodes(cf,ce,N)
-  resp <- rep(0,length(no))
-  for(i in 1:length(no)){
-    resp[i] <- response(parameters,n1,lambda1,lambda2,no[i])
-  }
-  p <- rep(0,length(no))
-  for(i in 1:length(no)){
-  p[i] <- ( a(parameters)^2 * resp[i] - b(parameters,z,n1,lambda1,lambda2) ) / ( 2 * a(parameters) * sqrt(abs(resp[i])) )
-  }
-  c <- splinefun(no,p)
-  q = c(z)
+c2 <- function(parameters, z, n1, lambda1, lambda2, cf, ce){
+  n2 <- response(parameters, n1, lambda1, lambda2, z)
+  q <- ( parameters$mu^2 * n2 - b(parameters, z, n1, lambda1, lambda2) ) / ( 2 * parameters$mu * sqrt(n2) )
+
   if(z<cf) {
     q=Inf
   }
   if(z>ce) {
     q=-Inf
   }
-  if (is.na(q)) {
-    stop("response must not be missing")
-  }
+
   return(q)
 }
 
@@ -52,11 +41,11 @@ plot_c2 <- function(d) {
   }
   out <- data.frame(data.matrix(cbind(z,y)))
   names(out)<-c("z_1","c_2")
-  ggplot2::ggplot(out,aes(z, y)) +
-    geom_line() +
-    labs(title="c_2(z_1)",x="z_1",y="c_2")+
-    theme_bw() +
-    theme(
-      panel.grid = element_blank()
+  ggplot2::ggplot(out, ggplot2::aes(z, y)) +
+    ggplot2::geom_line() +
+    ggplot2::labs(title="c_2(z_1)",x="z_1",y="c_2")+
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      panel.grid = ggplot2::element_blank()
     )
 }

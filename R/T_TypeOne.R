@@ -11,13 +11,13 @@
 #' @param n2 n_2 values on the nodes
 #' @param w nodes
 
-t_type_one <- function(parameters,cf,ce,c2,n1,n2,w){
-  f <- splinefun(w,c2)
-  g <- splinefun(w,n2)
+t_type_one <- function(parameters, cf, ce, c2, n1, n2, w){
+  f <- splinefun(w, c2)
+  g <- splinefun(w, n2)
   N=12
   h = (ce - cf) / N
   x = seq(cf,ce,h)
-  alpha=c(1,rep(2,(N-1)),1)
+  alpha=c(1, rep(2, (N-1)), 1)
 
   y=rep(0,(N+1))
   for(i in 1:(N+1)){

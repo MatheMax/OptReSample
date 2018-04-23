@@ -10,14 +10,14 @@
 #' @param nodes Nodes for the c_2-function
 #' @param c2 Corresponding c_2-values
 
-type_one <- function(parameters,cf,ce,nodes,c2){
-  f <- splinefun(nodes,c2)
-  N=12
+type_one <- function(parameters, cf, ce, nodes, c2){
+  f <- splinefun(nodes, c2)
+  N = 12
   h = (ce - cf) / N
-  x = seq(cf,ce,h)
-  alpha=c(1,rep(2,(N-1)),1)
+  x = seq(cf, ce,h)
+  alpha=c(1, rep (2,(N-1)), 1)
 
-  y=rep(0,(N+1))
+  y=rep(0, (N+1))
 
   for(i in 1:(N+1)){
     y[i] = pnorm( f(x[i]) ) * dnorm( x[i] )

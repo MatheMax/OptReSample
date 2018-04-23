@@ -13,19 +13,19 @@ t_design <- function(parameters){
   max <- 3
   dis <- 0.25
 
-  w = seq(min,max,dis)
+  w = seq(min, max, dis)
 
 
    # Start values
    start <- rep( 0 , 2*length(w)+3 )
    start[length(w)+3] <- (fixed(parameters)[1]) / 2
-   start[2] <- sqrt(start[length(w)+3]) * a(parameters)
+   start[2] <- sqrt(start[length(w)+3]) * parameters$mu
    start[3:(length(w)+2)] <- seq( 2.5, 0, -2.5/(length(w)-1) )
    start[(length(w)+4) : length(start)] <- seq( 60, 10, -50/(length(w)-1) )
 
-    score_min <- function(cf,ce,c2,n1,n2){ t_score(parameters,cf,ce,c2,n1,n2,w) }
-    t_1 <- function(cf,ce,c2,n1,n2){ t_type_one(parameters,cf,ce,c2,n1,n2,w) }
-    t_2 <- function(cf,ce,c2,n1,n2){ t_type_two(parameters,cf,ce,c2,n1,n2,w) }
+    score_min <- function(cf, ce, c2, n1, n2){ t_score(parameters, cf, ce, c2, n1, n2, w) }
+    t_1 <- function(cf, ce, c2, n1, n2){ t_type_one(parameters, cf, ce, c2, n1, n2, w) }
+    t_2 <- function(cf, ce, c2, n1, n2){ t_type_two(parameters, cf, ce, c2, n1, n2, w) }
 
   optimum <- nloptr::nloptr(
     x0          = start,

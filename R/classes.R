@@ -36,29 +36,20 @@ design <- function(
 #'
 #' \code{parameters} creats an object of class \code{parameters} which is needed for many functions in this package.
 #'
-#' If \code{mu0} and \code{sigma} are not speficied, \code{mualt} is assumed to be the standardized effect size
-#' of the alternative.
-#'
-#' @param mualt Effect value of the alternative hypothesis
+#' @param mu Standardized effect value of the alternative hypothesis
 #' @param alpha Maximal type I error rate
 #' @param beta Maximal type II error rate
-#' @param mu0 Effect value of the null hypothesis. Default value is 0.
-#' @param sigma Standard deviation. Default value is 1.
 #'
 #' @return An object of class \code{parameters.}
 
 parameters <- function(
-  mualt,
+  mu,
   alpha,
-  beta,
-  mu0 = 0,
-  sigma = 1
+  beta
 ) {
     return(
     structure(list(
-      mualt = mualt,
-      mu0 = mu0,
-      sigma = sigma,
+      mu = mu,
       alpha = alpha,
       beta = beta
     ), class = c("Parameters"))

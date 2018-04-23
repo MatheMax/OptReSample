@@ -6,17 +6,15 @@
 #' @param d An object of class \link{design}
 #' @param parameters Parameters specifying the design
 
-exp_n<-function(effect,d,parameters){
-  mualt=effect #the true effect size
-  mu0=parameters$mu0
-  sigma=parameters$sigma
+exp_n<-function(effect, d, parameters){
+  mualt=effect #the true standardized effect size
 
   n1 <- d$n1
   cf <- d$cf
   ce <- d$ce
   N=6
   h=(ce-cf)/(4*N)
-  x=nodes(cf,ce,N)
+  x=nodes(cf, ce, N)
   omega=rep(0,4*N+1)
   omega[1]=7
   w=c(32,12,32,14)
@@ -25,7 +23,7 @@ exp_n<-function(effect,d,parameters){
   y=rep(0,4*N+1)
   for(i in 1:(4*N+1)){
     n <- d$n2(x[i])
-    y[i] = n * dnorm( ( x[i] - sqrt(abs(n1))*(mualt-mu0)/sigma ) )
+    y[i] = n * dnorm( x[i] - sqrt(n1) * mualt )
   }
   p <- (2*h)/45*(t(omega)%*%y)
   f <- n1 + p
@@ -40,24 +38,23 @@ exp_n<-function(effect,d,parameters){
 #' @param parameters Parameters specifying the design
 
 plot_exp_n<-function(d,parameters){
-  mu0=parameters$mu0
-  mualt=parameters$mualt
-  dis=(mualt-mu0)
-  z = seq(mu0-dis/2,mualt+dis,dis/20)
+  mualt=parameters$mu
+  dis=mualt
+  z = seq(-dis/2,mualt+dis,dis/20)
   y = rep(0,length(z))
   for(i in 1:length(z)){
     y[i] <- exp_n(z[i],d,parameters)
   }
   out <- data.frame(data.matrix(cbind(z,y)))
   names(out)<-c("true effect","expected sample size")
-  ggplot(out,aes(z, y)) +
-    geom_line() +
-    geom_vline(xintercept = parameters$mualt, color = "red") +
-    scale_x_continuous("true effect", breaks = seq(0, 10, .1)) +
-    labs(title="Expected sample size",x="true effect",y="sample size") +
-    theme_bw() +
-    theme(
-      panel.grid = element_blank()
+  ggplot2::ggplot(out, ggplot2::aes(z, y)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_vline(xintercept = parameters$mu, color = "red") +
+    ggplot2::scale_x_continuous("true standardized effect", breaks = seq(0, 10, .1)) +
+    ggplot2::labs(title="Expected sample size",x="true effect",y="sample size") +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      panel.grid = ggplot2::element_blank()
     )
 }
 
@@ -69,7 +66,7 @@ plot_exp_n<-function(d,parameters){
 #' @param d An object of class \link{design}
 #' @param parameters Parameters specifying the design
 
-plot_n <- function(d,parameters) {
+plot_n <- function(d, parameters) {
   dis = d$ce - d$cf
   h = dis / 30
   z = seq(d$cf,d$ce,h)
@@ -79,13 +76,13 @@ plot_n <- function(d,parameters) {
   }
   out <- data.frame(data.matrix(cbind(z,y)))
   names(out)<-c("effect estimator","n")
-  ggplot(out,aes(z, y)) +
-    geom_point() +
+  ggplot2::ggplot(out, ggplot2::aes(z, y)) +
+    ggplot2::geom_point() +
     #scale_x_continuous("effect estimator", breaks = seq(d$cf,d$ce, .2)) +
-    labs(title="Total sample size",x="z",y="sample size")+
-    theme_bw() +
-    theme(
-      panel.grid = element_blank()
+    ggplot2::labs(title="Total sample size",x="z",y="sample size")+
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      panel.grid = ggplot2::element_blank()
     )
 }
 

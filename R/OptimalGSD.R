@@ -8,7 +8,7 @@
 
 optimal_gsd <- function(parameters) {
   # expected sample size
-  exp_n_gs<-function(parameters,cf,ce,n1,c2,n2){
+  exp_n_gs<-function(parameters, cf, ce, n1, c2, n2){
     N=6
     h=(ce-cf)/(4*N)
     x=nodes(cf,ce,N)
@@ -19,7 +19,7 @@ optimal_gsd <- function(parameters) {
     omega[4*N+1]=7
     y=rep(0,4*N+1)
     for(i in 1:(4*N+1)){
-      y[i] = n2 * dnorm( ( x[i] - sqrt(abs(n1))*a(parameters) ) )
+      y[i] = n2 * dnorm( ( x[i] - sqrt(abs(n1)) * parameters$mu ) )
     }
     p <- (2*h)/45*(t(omega)%*%y)
     f <- n1 + p
@@ -27,33 +27,33 @@ optimal_gsd <- function(parameters) {
   }
 
   # probability to reject
-  reject <- function(parameters,cf,ce,n1,c2,n2,mu){
-    p <- pnorm ( ce - sqrt(abs(n1)) * (mu - parameters$mu0) / parameters$sigma )
-    p <- p - pnorm ( cf - sqrt(abs(n1)) * (mu - parameters$mu0) / parameters$sigma )
-    p <- p * pnorm ( c2 - sqrt(abs(n2)) * (mu - parameters$mu0) / parameters$sigma )
-    p <- -p + 1 - pnorm( cf - sqrt(abs(n1)) * (mu - parameters$mu0) / parameters$sigma )
+  reject <- function(parameters, cf, ce, n1, c2, n2, mu){
+    p <- pnorm ( ce - sqrt(abs(n1)) * mu )
+    p <- p - pnorm ( cf - sqrt(abs(n1)) * mu )
+    p <- p * pnorm ( c2 - sqrt(abs(n2)) * mu )
+    p <- -p + 1 - pnorm( cf - sqrt(abs(n1)) * mu )
     return(p)
   }
 
 
   #Type I error
-  type_one <- function(cf,ce,n1,c2,n2){
-    reject(parameters,cf,ce,n1,c2,n2,parameters$mu0)
+  type_one <- function(cf, ce, n1, c2, n2){
+    reject(parameters, cf, ce, n1, c2, n2, 0)
   }
 
   #Power
-  power_gsd <- function(cf,ce,n1,c2,n2){
-    reject(parameters,cf,ce,n1,c2,n2,parameters$mualt)
+  power_gsd <- function(cf, ce, n1, c2, n2){
+    reject(parameters, cf, ce, n1, c2, n2, parameters$mu)
   }
 
-  exp_n_opt <- function(cf,ce,n1,c2,n2){
-    exp_n_gs(parameters,cf,ce,n1,c2,n2)
+  exp_n_opt <- function(cf, ce, n1, c2, n2){
+    exp_n_gs(parameters, cf, ce, n1, c2, n2)
   }
 
 
   optimum <- nloptr::nloptr(
     x0          = c(1,2,30,1,30),
-    eval_f      = function(x) exp_n_opt(x[1],x[2],x[3],x[4],x[5]),
+    eval_f      = function(x) exp_n_opt(x[1], x[2], x[3], x[4], x[5]),
     eval_g_ineq = function(x) c( x[1] + 0.01 - x[2] ,type_one(x[1],x[2],x[3],x[4],x[5])-parameters$alpha,
                                  1 - parameters$beta - power_gsd(x[1],x[2],x[3],x[4],x[5])),
     lb = c(-3,-3,1,-3,1),

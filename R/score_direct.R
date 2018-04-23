@@ -19,8 +19,8 @@
 
 
 
-score_direct <- function(parameters,cf,ce,nodes,c2,n1,n2){
-  g <- splinefun(nodes,n2)
+score_direct <- function(parameters, cf, ce, nodes, c2, n1, n2){
+  g <- splinefun(nodes, n2)
 
   N=12
 
@@ -31,7 +31,7 @@ score_direct <- function(parameters,cf,ce,nodes,c2,n1,n2){
   y=rep(0,(N+1))
   for(i in 1:(N+1)){
     alpha[i] = alpha[i] * g(x[i])
-    y[i] <- dnorm( x[i] - sqrt(abs(n1)) *a(parameters) )
+    y[i] <- dnorm( x[i] - sqrt(abs(n1)) * parameters$mu )
   }
   p <- (h/2)*(t(alpha)%*%y)
   p <- p + n1

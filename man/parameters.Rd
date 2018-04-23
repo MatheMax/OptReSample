@@ -4,26 +4,18 @@
 \alias{parameters}
 \title{Creating parameters object}
 \usage{
-parameters(mualt, alpha, beta, mu0 = 0, sigma = 1)
+parameters(mu, alpha, beta)
 }
 \arguments{
-\item{mualt}{Effect value of the alternative hypothesis}
+\item{mu}{Standardized effect value of the alternative hypothesis}
 
 \item{alpha}{Maximal type I error rate}
 
 \item{beta}{Maximal type II error rate}
-
-\item{mu0}{Effect value of the null hypothesis. Default value is 0.}
-
-\item{sigma}{Standard deviation. Default value is 1.}
 }
 \value{
 An object of class \code{parameters.}
 }
 \description{
 \code{parameters} creats an object of class \code{parameters} which is needed for many functions in this package.
-}
-\details{
-If \code{mu0} and \code{sigma} are not speficied, \code{mualt} is assumed to be the standardized effect size
-of the alternative.
 }

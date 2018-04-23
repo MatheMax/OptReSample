@@ -11,12 +11,12 @@ d_cf <- function(parameters,n1,lambda1,lambda2,x){
   n2 <- response(parameters,n1,lambda1,lambda2,x)
 
   #c2 berechnen
-  c2 <- ( a(parameters)^2 * n2 - b(parameters,x,n1,lambda1,lambda2) ) / ( 2 * a(parameters) * sqrt(abs(n2)) )
+  c2 <- ( parameters$mu^2 * n2 - b(parameters,x,n1,lambda1,lambda2) ) / ( 2 * parameters$mu * sqrt(abs(n2)) )
 
-  p <- - lambda1 * dnorm(x) + lambda2 * dnorm( x - a(parameters) * sqrt(abs(n1)) )
-  p <- p - n2 * dnorm( x - sqrt(abs(n1)) * a(parameters) )
+  p <- - lambda1 * dnorm(x) + lambda2 * dnorm( x - parameters$mu * sqrt(abs(n1)) )
+  p <- p - n2 * dnorm( x - sqrt(abs(n1)) * parameters$mu )
   p <- p + lambda1 * pnorm(c2) * dnorm(x)
-  p <- p - lambda2 * pnorm(c2 - a(parameters) * sqrt(abs(n2)) ) * dnorm( x - a(parameters) * sqrt(abs(n1)) )
+  p <- p - lambda2 * pnorm(c2 - parameters$mu * sqrt(abs(n2)) ) * dnorm( x - parameters$mu * sqrt(abs(n1)) )
   return(p)
 }
 
@@ -30,15 +30,15 @@ d_cf <- function(parameters,n1,lambda1,lambda2,x){
 #' @param lambda2 The penalization parameter for type two error
 #' @param x The z-value of the first stage
 d_ce <- function(parameters,n1,lambda1,lambda2,x){
-  #n2 berechnen
+  #Compute n2
   n2 <- response(parameters,n1,lambda1,lambda2,x)
 
-  #c2 berechnen
-  c2 <- ( a(parameters)^2 * n2 - b(parameters,x,n1,lambda1,lambda2) ) / ( 2 * a(parameters) * sqrt(abs(n2)) )
+  #Compute c2
+  c2 <- ( parameters$mu^2 * n2 - b(parameters,x,n1,lambda1,lambda2) ) / ( 2 * parameters$mu * sqrt(abs(n2)) )
 
-  p <- n2 * dnorm( x - sqrt(abs(n1)) * a(parameters) )
+  p <- n2 * dnorm( x - sqrt(abs(n1)) * parameters$mu )
   p <- p - lambda1 * pnorm(c2) * dnorm(x)
-  p <- p + lambda2 * pnorm(c2 - a(parameters) * sqrt(abs(n2)) ) * dnorm( x - a(parameters) * sqrt(abs(n1)) )
+  p <- p + lambda2 * pnorm(c2 - parameters$mu * sqrt(abs(n2)) ) * dnorm( x - parameters$mu * sqrt(abs(n1)) )
   return(p)
 }
 

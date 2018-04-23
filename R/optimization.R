@@ -23,27 +23,15 @@
 #' @return An object of class \link{design}
 
 
-optimal_design <- function(effect, alpha, pow, effect_null=0, sd=1, standardized=T, t_approx=F, lagrange=T){
-  beta <- 1-pow
-  mu0 <- effect_null
-  sigma <- sd
+optimal_design <- function(effect, alpha, pow, effect_null=0, sd=1, standardized=T, t_approx=F, lagrange=T) {
+  beta <- 1 - pow
 
-  if( standardized==T ){
-    mu0 <- 0
-    sigma <- 1
+  if(standardized == F){
+    effect <- (effect - effect_null) / sd
   }
-
-
-  if( t_approx==T ){
-    mu0 <- 0
-    sigma <- 1
-  }
-
 
   pars<-list(
-    mualt=effect,
-    mu0=mu0,
-    sigma=sigma,
+    mu=effect,
     alpha=alpha,
     beta=beta
   )
@@ -55,7 +43,7 @@ optimal_design <- function(effect, alpha, pow, effect_null=0, sd=1, standardized
       d <- direct_design(pars)
     } else{
       l <- find_lambda(pars)
-      d <- lagrange_design(pars,l[1],l[2])
+      d <- lagrange_design(pars, l[1], l[2])
     }
   }
 
