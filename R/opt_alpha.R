@@ -3,6 +3,7 @@
 #' \code{opt_alpha} gives the type I error rate of a design.
 #'
 #' @param d An object of class \code{design}.
+#' @export
 
 opt_alpha <- function(d){
   n1 <- d$n1

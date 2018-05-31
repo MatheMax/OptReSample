@@ -9,6 +9,7 @@
 #' @param c2 Function of z which gives the stage two rejection boundary
 #'
 #' @return An object of class \code{design}
+#' @export
 
 design <- function(
   cf,
@@ -41,6 +42,7 @@ design <- function(
 #' @param beta Maximal type II error rate
 #'
 #' @return An object of class \code{parameters.}
+#' @export
 
 parameters <- function(
   mu,

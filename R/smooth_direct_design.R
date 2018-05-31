@@ -10,6 +10,8 @@
 #' @param parameters Parameters specifying the design
 #'
 #' @return An object of class design.
+#'
+#' @export
 
 direct_design_smooth <- function (parameters){
   s_min <- function(cf, ce, n1){ score_smooth(parameters, cf, ce, n1) }
@@ -42,7 +44,7 @@ direct_design_smooth <- function (parameters){
   ce <- optimum$solution[2]
   n1 <- optimum$solution[3]
 
-  s2 <- stage_two(parameters,cf,ce,n1)
+  s2 <- stage_two(parameters, cf ,ce, n1)
   c2 <- s2[1:(length(s2)/2)]
   n2 <- s2[(length(s2)/2+1):length(s2)]
   dis <- (round(ce,1)-round(cf,1))/(length(n2)-1)

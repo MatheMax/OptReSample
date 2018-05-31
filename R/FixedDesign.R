@@ -3,6 +3,7 @@
 #' \code{fixed} computes the fixed design.
 #'
 #' @param parameters Parameters specifying the design
+#' @export
 
 
 

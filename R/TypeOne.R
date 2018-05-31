@@ -9,6 +9,8 @@
 #' @param ce Boundary for stopping for efficacy after the first stage
 #' @param nodes Nodes for the c_2-function
 #' @param c2 Corresponding c_2-values
+#'
+#' @export
 
 type_one <- function(parameters, cf, ce, nodes, c2){
   f <- splinefun(nodes, c2)
@@ -17,12 +19,15 @@ type_one <- function(parameters, cf, ce, nodes, c2){
   x = seq(cf, ce,h)
   alpha=c(1, rep (2,(N-1)), 1)
 
-  y=rep(0, (N+1))
-
-  for(i in 1:(N+1)){
-    y[i] = pnorm( f(x[i]) ) * dnorm( x[i] )
+  # w = c(x, alpha)
+  to <- function(w){
+    w[2] * pnorm(f(w[1])) * dnorm(w[1])
   }
-  p <- (h/2)*(t(alpha)%*%y)
+
+  y <- apply(cbind(x,alpha), 1, to)
+
+
+  p <- (h/2) * sum(y)
   p <- 1 - pnorm(cf) - p
   return(p)
 }

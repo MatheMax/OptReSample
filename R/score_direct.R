@@ -15,8 +15,8 @@
 #' @param c2 c_2-values that correspond to \code{nodes}
 #' @param n1 First stage sample size
 #' @param n2 n_2-values that correspond to \code{nodes}
-
-
+#'
+#' @export
 
 
 score_direct <- function(parameters, cf, ce, nodes, c2, n1, n2){
@@ -25,15 +25,16 @@ score_direct <- function(parameters, cf, ce, nodes, c2, n1, n2){
   N=12
 
   h = (ce - cf) / N
-  x = seq(cf,ce,h)
-  alpha=c(1,rep(2,(N-1)),1)
+  x = seq(cf, ce, h)
+  alpha = c(1, rep(2,(N-1)), 1)
 
-  y=rep(0,(N+1))
-  for(i in 1:(N+1)){
-    alpha[i] = alpha[i] * g(x[i])
-    y[i] <- dnorm( x[i] - sqrt(abs(n1)) * parameters$mu )
+  # w = c(x, alpha)
+  sc <- function(w){
+    y <- w[2] * g(w[1]) * dnorm( w[1] - sqrt(n1) * parameters$mu)
   }
-  p <- (h/2)*(t(alpha)%*%y)
+
+  y <- apply(cbind(x,alpha), 1, sc)
+  p <- (h/2) * sum(y)
   p <- p + n1
   return(p)
 }

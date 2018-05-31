@@ -8,20 +8,24 @@
 #' @param h Distance between two nodes
 #' @param N 4N+1 gives the number of nodes
 #' @param w nodes inside the interval (cf,ce)
+#'
+
 
 score_direct_smooth <- function(parameters, n1, n2, h, N, w){
 
-  omega=rep(0,4*N+1)
-  omega[1]=7
-  se=c(32,12,32,14)
-  omega[-1]=rep(se,N)
-  omega[4*N+1]=7
-  y=rep(0,4*N+1)
-  for(i in 1:(4*N+1)){
-    y[i] <- n2[i] * dnorm( w[i] - sqrt(n1) * parameters$mu )
-  }
-  p <- (2*h)/45*(t(omega)%*%y)
+  #o <- omega(N)
+  o <- c(1, rep(2,(N-1)), 1)
 
+
+  # x = c(n2, w, omega)
+  sc <- function(x) {
+    y <- x[1] * dnorm( x[2] - sqrt(n1) * parameters$mu ) * x[3]
+    return(y)
+  }
+  y <- apply( cbind(n2, w, o), 1, sc)
+
+  #p <- (2*h)/45*sum(y)
+  p <- (h/2) * sum(y)
 
   p <- p + n1
   return(p)
@@ -35,13 +39,15 @@ score_direct_smooth <- function(parameters, n1, n2, h, N, w){
 #' @param cf Boundary for stopping for futility
 #' @param ce Boundary for stopping for efficacy
 #' @param n1 Stage one sample size
+#'
+#' @export
 
 score_smooth <- function(parameters, cf, ce, n1){
-  N=3
-  h=(ce-cf)/(4*N)
+  N = 12
+  h = (ce-cf)/(N)
   w <- seq(cf,ce,h)
 
-  s2 <- stage_two(parameters,cf,ce,n1)
+  s2 <- stage_two(parameters, cf, ce, n1)
   n2 <- s2[ (length(s2)/2 + 1) : length(s2)]
 
   p <- score_direct_smooth(parameters,n1,n2,h,N,w)
@@ -61,21 +67,24 @@ score_smooth <- function(parameters, cf, ce, n1){
 #' @param h Distance between two nodes
 #' @param N 4N+1 gives the number of nodes
 #' @param w nodes inside the interval (cf,ce)
+#'
+
 
 
 type_one_smooth <- function(parameters, cf, c2, h, N, w){
 
-  omega=rep(0,4*N+1)
-  omega[1]=7
-  se=c(32,12,32,14)
-  omega[-1]=rep(se,N)
-  omega[4*N+1]=7
-  y=rep(0,4*N+1)
-  for(i in 1:(4*N+1)){
-    y[i] <- pnorm(c2[i]) * dnorm(w[i])
-  }
-  p <- (2*h)/45*(t(omega)%*%y)
+  #omega <- omega(N)
+  alpha <- c(1, rep(2,(N-1)), 1)
 
+  # x = c(c2, w, alpha)
+  to <- function(x){
+    pnorm(x[1]) * dnorm(x[2]) * x[3]
+  }
+  y <- apply(cbind(c2, w, alpha), 1, to)
+
+ # p <- (2*h)/45*(t(omega)%*%y)
+
+  p <- (h/2) * sum(y)
 
   p <- 1 - pnorm(cf) - p
   return(p)
@@ -94,20 +103,22 @@ type_one_smooth <- function(parameters, cf, c2, h, N, w){
 #' @param h Distance between two nodes
 #' @param N 4N+1 gives the number of nodes
 #' @param w nodes inside the interval (cf,ce)
+#'
 
 
 type_two_smooth <- function(parameters, cf, c2, n1, n2, h, N, w){
 
-  omega=rep(0,4*N+1)
-  omega[1]=7
-  se=c(32,12,32,14)
-  omega[-1]=rep(se,N)
-  omega[4*N+1]=7
-  y=rep(0,4*N+1)
-  for(i in 1:(4*N+1)){
-    y[i] <- pnorm(c2[i] - sqrt(abs(n2[i])) * parameters$mu ) * dnorm(w[i] - sqrt(n1) * parameters$mu)
+  #omega <- omega(N)
+  alpha <- c(1, rep(2,(N-1)), 1)
+  # x = c(c2, n2, w, alpha)
+  tt <- function(x) {
+    y <- x[4] * pnorm(x[1] - sqrt(abs(x[2])) * parameters$mu ) * dnorm(x[3] - sqrt(n1) * parameters$mu)
+    return(y)
   }
-  p <- (2*h)/45*(t(omega)%*%y)
+  y <- apply(cbind(c2,n2,w,alpha), 1, tt)
+
+  #p <- (2*h)/45*(t(omega)%*%y)
+  p <- (h/2) * sum(y)
 
   p <- p + pnorm(cf - sqrt(n1) * parameters$mu)
   return(p)
@@ -129,16 +140,18 @@ type_two_smooth <- function(parameters, cf, c2, n1, n2, h, N, w){
 #'
 #' @return A vector. The first half give the c_2, and the second the n_2-values, on a equidistance grid inside the
 #' interval (cf,ce).
+#'
+#' @export
 
 stage_two <- function(parameters, cf, ce, n1){
 
-  N=3
-  h=(ce-cf)/(4*N)
+  N=12
+  h=(ce-cf)/(N)
   w <- seq(cf, ce, h)
 
   k <- optimal_gsd(parameters)
   start_n2 <- rep( ceiling( k$n2( k$cf + (k$ce-k$cf) / 2 ) ) , length(w) )
-  start_c2 <- rep( k$c2( k$cf + (k$ce-k$cf) / 2 ) , length(w) )
+  start_c2 <- rep( k$c2( k$cf / 2 + k$ce / 2 ) , length(w) )
 
 
   score_min <- function(n2){ score_direct_smooth(parameters, n1, n2, h, N, w) }
@@ -163,11 +176,11 @@ stage_two <- function(parameters, cf, ce, n1){
   n2 <- optimum$solution[(length(w)+1) : (2*length(w))]
 
   r1 <- t_1(c2) / parameters$alpha
-  r2 <- t_2(c2,optimum$solution[(length(w)+1) : (2*length(w))]) / parameters$beta
+  r2 <- t_2(c2, optimum$solution[(length(w)+1) : (2*length(w))]) / parameters$beta
 
   if(abs(1-r1)<0.05 && abs(1-r2) < 0.05){ n2 <- optimum$solution[(length(w)+1) : (2*length(w))]}
   else{n2 <- rep(99999,length(w))}
 
-  return(c(c2,n2))
+  return(c(c2, n2))
 }
 

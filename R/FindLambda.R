@@ -12,6 +12,7 @@
 #'
 #' @return A two-dimensional vector which gives the deviation of type I resp. type II error.
 
+#' @export
 err <- function(parameters, lambda1, lambda2) {
 
   n1 <- n1(parameters, lambda1, lambda2)
@@ -19,24 +20,27 @@ err <- function(parameters, lambda1, lambda2) {
   cf <- c[1]
   ce <- c[2]
 
-
   dis = (ce - cf)
   h = dis/10
   x = seq(cf, ce, h)
   alpha = c(1, rep(2, 9), 1)
-  y1 = rep(0, 11)
-  y2 = rep(0, 11)
-  for(i in 1:11){
-    n2 <-  response(parameters, n1, lambda1, lambda2, x[i])
-    c2 <- ( parameters$mu^2 * n2 - b(parameters, x[i], n1, lambda1, lambda2) ) / ( 2 * parameters$mu * sqrt(abs(n2)) )
 
-    y1[i] = pnorm( c2 ) * dnorm( x[i] )
-    y2[i] = pnorm( c2 - sqrt(abs(n2)) * parameters$mu) * dnorm( x[i] - sqrt( n1 ) * parameters$mu )
+  yy <- function(x, parameters.=parameters, n1.=n1, lambda1.=lambda1, lambda2.=lambda2){
+    n2 <-  response(parameters., n1., lambda1., lambda2., x)
+    c2 <- ( parameters.$mu^2 * n2 - b(parameters., x, n1., lambda1., lambda2.) ) / ( 2 * parameters.$mu * sqrt(abs(n2)) )
+
+    y1 = pnorm( c2 ) * dnorm( x )
+    y2 = pnorm( c2 - sqrt(abs(n2)) * parameters.$mu) * dnorm( x - sqrt(n1.) * parameters.$mu )
+
+    return(c(y1,y2))
   }
-  q <- (h/2)*(t(alpha)%*%y2)
+
+  y <- sapply(x,yy)
+
+  q <- (h/2)*(t(alpha) %*% y[2,])
   q <- 1 - pnorm ( cf - sqrt( n1 ) * parameters$mu ) - q
 
-  p <- (h/2)*(t(alpha)%*%y1)
+  p <- (h/2)*(t(alpha) %*% y[1,])
   p <- 1 - pnorm(cf) - p
 
   g <- ( p - parameters$alpha )
@@ -54,6 +58,8 @@ err <- function(parameters, lambda1, lambda2) {
 #' The choice of the starting values seems quite arbitrarily. It is based on own examples. Improvments are very welcome.
 #'
 #' @param parameters Parameters specifying the design.
+#' @export
+
 
 lambda_start <- function(parameters){
   if( parameters$mu>0.5 ){
@@ -65,7 +71,7 @@ lambda_start <- function(parameters){
   } else if( parameters$mu>0.2 ){
     l2 <- max( 200 - 1500 * parameters$alpha, 1)
   } else{
-    l2 <- 300 * ( 1 + (0.2 - parameters$mu) * 10 )^2
+    l2 <- max( 300 * ( 1 + (0.2 - parameters$mu) * 10 )^2, 1)
   }
 
   ratio <- parameters$beta / parameters$alpha
@@ -83,12 +89,13 @@ lambda_start <- function(parameters){
     g <- function(z) {
       x = c(10,11,12)
       y = c(11,10.5,6.6)
-      q <- lm(y~x+I(x^2))
+      q <- lm(y ~ x + I(x^2))
       p <- q$coefficients[1] + q$coefficients[2] * z + q$coefficients[3] * z^2
       return(p)
     }
     l1 <- as.numeric( g(ratio) * l2 )
   }
+  l1 <- max(l1, 10)
 
   return(c(l1, l2))
 
@@ -105,14 +112,15 @@ lambda_start <- function(parameters){
 #' @param parameters Parameters specifying the design.
 #'
 #' @return A two-dimensional vector (lambda1, lambda2).
+#' @export
 
 find_lambda <- function(parameters){
   l <- lambda_start(parameters)
 
   err_opt<-function(lambda1, lambda2){err(parameters, lambda1, lambda2)}
-  opt <- rootSolve::multiroot(function(x) err_opt(x[1], x[2]), c(l[1], l[2]))
+  opt <- rootSolve::multiroot(function(x) err_opt(x[1], x[2]), c(l[1], l[2]), atol=c(0.01,0.01))
 
-  return(opt$root)
+  return(ceiling(opt$root))
 }
 
 
@@ -126,6 +134,7 @@ find_lambda <- function(parameters){
 #' @param parameters Parameters specifying the design.
 #'
 #' @return A two-dimensional vector (lambda1, lambda2).
+#' @export
 
 
 find_lambda_direct <- function(parameters){

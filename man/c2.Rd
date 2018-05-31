@@ -17,4 +17,5 @@ c2(parameters, z, n1, lambda1, lambda2, cf, ce)
   @param lambda2 Penalization parameter for type II error
   @param cf Boundary for stopping for futility
   @param ce Boundary for stopping for efficacy
+  @export
 }

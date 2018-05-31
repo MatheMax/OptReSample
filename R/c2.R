@@ -9,6 +9,7 @@
 #'   @param lambda2 Penalization parameter for type II error
 #'   @param cf Boundary for stopping for futility
 #'   @param ce Boundary for stopping for efficacy
+#'   @export
 
 c2 <- function(parameters, z, n1, lambda1, lambda2, cf, ce){
   n2 <- response(parameters, n1, lambda1, lambda2, z)
@@ -30,6 +31,7 @@ c2 <- function(parameters, z, n1, lambda1, lambda2, cf, ce){
 #' \code{plot_c2} plots the c_2 function of a design in dependence of the first stage z-value.
 #'
 #' @param d An object of class \link{design}
+#' @export
 
 plot_c2 <- function(d) {
   dis = d$ce - d$cf
@@ -43,7 +45,7 @@ plot_c2 <- function(d) {
   names(out)<-c("z_1","c_2")
   ggplot2::ggplot(out, ggplot2::aes(z, y)) +
     ggplot2::geom_line() +
-    ggplot2::labs(title="c_2(z_1)",x="z_1",y="c_2")+
+    ggplot2::labs(title=expression(c[2](z[1])),x=expression(z[1]),y=expression(c[2]))+
     ggplot2::theme_bw() +
     ggplot2::theme(
       panel.grid = ggplot2::element_blank()

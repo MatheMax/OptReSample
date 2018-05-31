@@ -4,6 +4,7 @@
 #' alternative hypothesis and holdes presepcified type I and type II error constraints.
 #'
 #' @param parameters Parameters specifying the design
+#' @export
 
 
 optimal_gsd <- function(parameters) {

@@ -7,6 +7,8 @@
 #' @param effect Effect size on which one wants to calculate the power.
 #' @param d An object of class \code{design}.
 #' @param parameters Parameters speficying the situation. See \link{parameters} for details.
+#'
+#' @export
 
 real_power<-function(effect, d, parameters){
   mualt=effect #the true standardized effect size
@@ -43,11 +45,13 @@ real_power<-function(effect, d, parameters){
 #'
 #' @param d An object of class \code{design}.
 #' @param parameters Parameters speficying the situation. See \link{parameters} for details.
+#'
+#' @export
 
 
 plot_power<-function(d, parameters){
   nu = parameters$mu
-  z = seq( -0.25*nu, 1.5*nu, nu/20)
+  z = seq(0, 1.5*nu, nu/20)
   y = rep(0,length(z))
   for(i in 1:length(z)){
    y[i] <- real_power(z[i], d, parameters)
@@ -56,9 +60,9 @@ plot_power<-function(d, parameters){
   names(out)<-c("true effect","power")
   ggplot2::ggplot(out,ggplot2::aes(z, y) ) +
     ggplot2::geom_line() +
-    ggplot2::geom_hline(yintercept = 1-parameters$beta, color = "red") +
-    ggplot2::geom_vline(xintercept = parameters$mu, color = "blue") +
-    ggplot2::scale_x_continuous("true effect", breaks = seq(0, 10, .1)) +
+    ggplot2::geom_hline(yintercept = 1-parameters$beta, linetype = "dashed") +
+    ggplot2::geom_vline(xintercept = parameters$mu, linetype = "dotted") +
+    ggplot2::scale_x_continuous("true standardized  effect", breaks = seq(0, 10, .1)) +
     ggplot2::labs(title="Power",x="true effect",y="power")+
     ggplot2::theme_bw() +
     ggplot2::theme(
@@ -75,6 +79,8 @@ plot_power<-function(d, parameters){
 #'
 #' @param d An object of class \code{design}.
 #' @param parameters Parameters speficying the situation. See \link{parameters} for details.
+#'
+#' @export
 
 opt_power <- function(d, parameters) {
   real_power(parameters$mu, d, parameters)

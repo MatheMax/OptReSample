@@ -5,6 +5,7 @@
 #' @param effect Effect size for which the expected sample size should be calculated
 #' @param d An object of class \link{design}
 #' @param parameters Parameters specifying the design
+#' @export
 
 exp_n<-function(effect, d, parameters){
   mualt=effect #the true standardized effect size
@@ -36,11 +37,11 @@ exp_n<-function(effect, d, parameters){
 #'
 #' @param d An object of class \link{design}
 #' @param parameters Parameters specifying the design
+#' @export
 
 plot_exp_n<-function(d,parameters){
-  mualt=parameters$mu
-  dis=mualt
-  z = seq(-dis/2,mualt+dis,dis/20)
+  nu = parameters$mu
+  z = seq(0, 1.5*nu, nu/20)
   y = rep(0,length(z))
   for(i in 1:length(z)){
     y[i] <- exp_n(z[i],d,parameters)
@@ -49,7 +50,7 @@ plot_exp_n<-function(d,parameters){
   names(out)<-c("true effect","expected sample size")
   ggplot2::ggplot(out, ggplot2::aes(z, y)) +
     ggplot2::geom_line() +
-    ggplot2::geom_vline(xintercept = parameters$mu, color = "red") +
+    ggplot2::geom_vline(xintercept = parameters$mu, linetype = "dotted") +
     ggplot2::scale_x_continuous("true standardized effect", breaks = seq(0, 10, .1)) +
     ggplot2::labs(title="Expected sample size",x="true effect",y="sample size") +
     ggplot2::theme_bw() +
@@ -65,6 +66,7 @@ plot_exp_n<-function(d,parameters){
 #'
 #' @param d An object of class \link{design}
 #' @param parameters Parameters specifying the design
+#' @export
 
 plot_n <- function(d, parameters) {
   dis = d$ce - d$cf

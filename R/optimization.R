@@ -22,6 +22,8 @@
 #' @param lagrange Logical. Should a Lagrangian procedure be used? Default is \code{T}.
 #'
 #' @return An object of class \link{design}
+#'
+#' @export
 
 
 optimal_design <- function(effect, alpha, pow, effect_null=0, sd=1, standardized=T, t_approx=F, lagrange=T) {

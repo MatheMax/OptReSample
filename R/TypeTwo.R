@@ -12,6 +12,8 @@
 #' @param c2 c_2-values that correspond to \code{nodes}
 #' @param n1 First stage sample size
 #' @param n2 n_2-values that correspond to \code{nodes}
+#'
+#' @export
 
 
 
@@ -23,12 +25,13 @@ type_two <- function(parameters, cf, ce, nodes, c2, n1, n2){
   x = seq(cf,ce,h)
   alpha=c(1,rep(2,(N-1)),1)
 
-  y=rep(0,(N+1))
-  for(i in 1:(N+1)){
-    y[i] = pnorm( f(x[i]) - sqrt(abs(g(x[i])))  * parameters$mu )
-    y[i] = y[i] * dnorm( x[i] - sqrt(abs(n1))  * parameters$mu )
+  # w = ( x | alpha )
+  tt <- function(w){
+    w[2] * pnorm( f(w[1]) - sqrt(abs(g(w[1])))  * parameters$mu ) * dnorm( w[1] - sqrt(abs(n1))  * parameters$mu )
   }
-  p <- (h/2)*(t(alpha)%*%y)
+
+  y <- apply(cbind(x,alpha), 1, tt)
+  p <- (h/2) * sum(y)
   p <- p + pnorm( cf - sqrt(abs(n1)) * parameters$mu )
   return(p)
 }

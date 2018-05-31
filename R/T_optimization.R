@@ -5,6 +5,8 @@
 #' @param parameters Parameters specifying the design
 #'
 #' @return An object of class \link{design}
+#'
+#' @export
 
 t_design <- function(parameters){
 

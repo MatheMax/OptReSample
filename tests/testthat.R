@@ -1,4 +1,4 @@
 library(testthat)
-library(AdReSample)
+library(OptReSample)
 
-test_check("AdReSample")
+test_check("OptReSample")

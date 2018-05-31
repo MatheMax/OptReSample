@@ -4,6 +4,7 @@
 #'
 #' @param parameters The parameters (alpha, power, standardized effect) whith which you want to build your design
 #' @param lambda1,lambda2 The Lagrange penalization parameters
+#' @export
 
 
 n1 <- function(parameters, lambda1, lambda2){
@@ -12,9 +13,9 @@ n1 <- function(parameters, lambda1, lambda2){
     p <- score(parameters, c[1], c[2], n, lambda1, lambda2)
     return(p)
   }
-  start <- (fixed(parameters)[1]) / 2
+
   opt <- nloptr::nloptr(
-    x0        =  start,
+    x0        =  (fixed(parameters)[1]) / 2,
     eval_f  = function(x) { s(x) },
     lb = 1,
     ub = 1000,

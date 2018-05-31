@@ -9,6 +9,7 @@
 #'
 #' @return An object of class \link{design}.
 #'
+#' @export
 
 
 direct_design <- function(parameters){

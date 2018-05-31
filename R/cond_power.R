@@ -7,7 +7,7 @@
 #' @param z Z_1-value of the first stage
 #' @param d An object of class \code{design}
 #' @param parameters Parameters secifying the design
-#'
+#' @export
 
 cond_power<-function(z, d, parameters){
   f <- 0
@@ -26,6 +26,7 @@ cond_power<-function(z, d, parameters){
 #'
 #' @param d An object of class \code{design}
 #' @param parameters Parameters secifying the design
+#' @export
 
 
 plot_cond_power<-function(d, parameters){
@@ -39,8 +40,9 @@ plot_cond_power<-function(d, parameters){
   names(out)<-c("z_1","conditional power")
   ggplot2::ggplot(out, ggplot2::aes(z, y)) +
     ggplot2::geom_line() +
-    ggplot2::geom_hline(yintercept = 1-parameters$beta, color = "red") +
-   # scale_x_continuous("z_1", breaks = seq(d$cf, d$ce, .2)) +
+    ggplot2::geom_hline(yintercept = 1-parameters$beta, linetype = "dashed") +
+    ggplot2::labs(title="Conditional power", x=expression(z[1]), y="conditional power")+
+       # scale_x_continuous("z_1", breaks = seq(d$cf, d$ce, .2)) +
     ggplot2::theme_bw() +
     ggplot2::theme(
       panel.grid = ggplot2::element_blank()

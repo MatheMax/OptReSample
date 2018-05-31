@@ -6,6 +6,8 @@
 #' @param lambda1 The penalization parameter for type one error
 #' @param lambda2 The penalization parameter for type two error
 #' @param x The z-value of the first stage
+#' @export
+
 d_cf <- function(parameters,n1,lambda1,lambda2,x){
   #n2 berechnen
   n2 <- response(parameters,n1,lambda1,lambda2,x)
@@ -29,6 +31,7 @@ d_cf <- function(parameters,n1,lambda1,lambda2,x){
 #' @param lambda1 The penalization parameter for type one error
 #' @param lambda2 The penalization parameter for type two error
 #' @param x The z-value of the first stage
+#' @export
 d_ce <- function(parameters,n1,lambda1,lambda2,x){
   #Compute n2
   n2 <- response(parameters,n1,lambda1,lambda2,x)
@@ -55,6 +58,7 @@ d_ce <- function(parameters,n1,lambda1,lambda2,x){
 #' @param lambda1 The penalization parameter for type one error
 #' @param lambda2 The penalization parameter for type two error
 #' @return A two dimensional vector (c_f, c_e)
+#' @export
 
 
 c_early <- function(parameters,n1,lambda1,lambda2){

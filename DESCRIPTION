@@ -4,8 +4,7 @@ Title: Computing Optimal Adaptive Designs
 Version: 0.1.0
 Author: Maximilian Pilz
 Maintainer: Maximilian Pilz <pilz@imbi.uni-heidelberg.de>
-Description: OptReSample provides the computation of optimal adaptive two stage designs for a Gaussian distributed outcome. 
-	The designs are optimal w.r.t. the expected sample size under a point alternative hypothesis. 
+Description: OptReSample provides the computation of optimal adaptive two stage designs for a Gaussian distributed outcome. The designs are optimal w.r.t. the expected sample size under a point alternative hypothesis. 
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
@@ -16,5 +15,6 @@ Suggests:
   testthat,
   ggplot2,
   devtools,
+  dplyr,
   roxygen2
 RoxygenNote: 6.0.1

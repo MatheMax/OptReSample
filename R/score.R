@@ -9,6 +9,8 @@
 #' @param n1 First stage sample size
 #' @param lambda1 Penalization parameter for type I error
 #' @param lambda2 Penalization parameter for type II error
+#'
+#' @export
 
 score <- function( parameters, cf, ce, n1, lambda1, lambda2 ) {
   # Compute the integral
@@ -20,22 +22,26 @@ score <- function( parameters, cf, ce, n1, lambda1, lambda2 ) {
   w = c( 32, 12, 32, 14 )
   omega[-1] = rep( w, N )
   omega[4*N+1] = 7
-  y=rep( 0, 4 * N + 1 )
 
-  for(i in 1:(4*N+1)) {
-    n <- response( parameters, n1, lambda1, lambda2, x[i] )
-    c <- ( parameters$mu^2 * n - b( parameters, x[i], n1, lambda1, lambda2 ) ) / ( 2 * parameters$mu * sqrt(n) )
-    y[i] <- n * dnorm( x[i] - parameters$mu * sqrt(n1) )
-    y[i] <- y[i] - ( lambda1 * pnorm(c) * dnorm(x[i]) )
-    y[i] <- y[i] + ( lambda2 * pnorm( c - parameters$mu * sqrt(n) ) * dnorm( x[i] - parameters$mu * sqrt(n1) ) )
+  sc <- function(x, parameters_=parameters, cf_=cf, ce_=ce, n1_=n1, lambda1_=lambda1, lambda2_=lambda2) {
+    n <- response( parameters_, n1_, lambda1_, lambda2_, x )
+    c <- ( parameters_$mu^2 * n - b( parameters_, x, n1_, lambda1_, lambda2_ ) ) / ( 2 * parameters_$mu * sqrt(n) )
+    y <- n * dnorm( x - parameters_$mu * sqrt(n1_) )
+    y <- y - ( lambda1_ * pnorm(c) * dnorm(x) )
+    y <- y + ( lambda2_ * pnorm( c - parameters_$mu * sqrt(n) ) * dnorm( x - parameters_$mu * sqrt(n1_) ) )
+    return(y)
   }
-  p <- (2*h)/45*(t(omega)%*%y)
+
+
+  y <- sapply(x, sc)
+
+  p <- (2 * h) / 45 * (t(omega) %*% y)
 
 
   # Compute the score
-  g <- n1 + lambda1 * ( 1 - parameters$alpha - pnorm( cf ) )
+  g <- n1 + lambda1 * ( 1 - parameters$alpha - pnorm(cf) )
   g <- g + lambda2 * ( pnorm( cf - parameters$mu * sqrt(n1) ) - parameters$beta )
   g <- g + p
-  #g <- ifelse( is.finite(g), g, 9999 )
+
   return(g)
 }

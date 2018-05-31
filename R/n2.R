@@ -4,11 +4,12 @@
 #'
 #'  Here, the Lagrangian framework is used du to the fact that the computation of n_2 can be reduced to a node-finding problem.
 #'
-#'   @param parameters Parameters specifying the design
-#'   @param n1 First stage sample size
-#'   @param lambda1 Penalization parameter for type I error
-#'   @param lambda2 Penalization parameter for type II error
-#'   @param z Z_1-value of the first stage
+#'  @param parameters Parameters specifying the design
+#'  @param n1 First stage sample size
+#'  @param lambda1 Penalization parameter for type I error
+#'  @param lambda2 Penalization parameter for type II error
+#'  @param z Z_1-value of the first stage
+#'  @export
 
 
 response <- function( parameters, n1, lambda1, lambda2, z ) {
@@ -44,14 +45,14 @@ response <- function( parameters, n1, lambda1, lambda2, z ) {
 #'
 #' \code{n2} differs from \link{response} only so far that the values are set to 0 outside the interval (cf,ce).
 #'
-#'   @param parameters Parameters specifying the design
-#'   @param z Z_1-value of the first stage
-#'   @param n1 First stage sample size
-#'   @param lambda1 Penalization parameter for type I error
-#'   @param lambda2 Penalization parameter for type II error
-#'   @param cf Boundary for stopping for futility
-#'   @param ce Boundary for stopping for efficacy
-#'
+#'  @param parameters Parameters specifying the design
+#'  @param z Z_1-value of the first stage
+#'  @param n1 First stage sample size
+#'  @param lambda1 Penalization parameter for type I error
+#'  @param lambda2 Penalization parameter for type II error
+#'  @param cf Boundary for stopping for futility
+#'  @param ce Boundary for stopping for efficacy
+#' @export
 
 
 n2 <- function(parameters, z, n1, lambda1, lambda2, cf, ce ) {
@@ -68,6 +69,7 @@ n2 <- function(parameters, z, n1, lambda1, lambda2, cf, ce ) {
 #' \code{plot_n2} plots the n2-function of a design.
 #'
 #' @param d An object of class \link{design}.
+#' @export
 
 plot_n2 <- function(d) {
   h = (d$ce - d$cf) / 30
@@ -77,10 +79,10 @@ plot_n2 <- function(d) {
     y[i] <- d$n2(z[i])
   }
   out <- data.frame(data.matrix(cbind(z, y)))
-  names(out)<-c("z_1", "n_2")
+  names(out)<-c('z_1', "n_2")
   ggplot2::ggplot(out,ggplot2::aes(z, y)) +
     ggplot2::geom_line() +
-    ggplot2::labs(title="n_2(z_1)", x="z_1", y="n_2")+
+    ggplot2::labs(title=expression(n[2](z[1])), x=expression(z[1]), y=expression(n[2]))+
     ggplot2::theme_bw() +
     ggplot2::theme(
       panel.grid = ggplot2::element_blank()

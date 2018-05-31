@@ -11,6 +11,8 @@
 #' @param n1 Stage one sample size
 #' @param n2 n_2 values on the nodes
 #' @param w nodes
+#'
+#' @export
 
 t_type_two <- function(parameters, cf, ce, c2, n1, n2, w){
   f <- splinefun(w,c2)
@@ -20,12 +22,15 @@ t_type_two <- function(parameters, cf, ce, c2, n1, n2, w){
   x = seq(cf,ce,h)
   alpha=c(1,rep(2,(N-1)),1)
 
-  y=rep(0,(N+1))
-  for(i in 1:(N+1)){
-    y[i] = pt( f(x[i]), df = max(g(x[i])-1,1) , ncp = sqrt(g(x[i]))*parameters$mu )
-    y[i] = y[i] * dt( x[i], df=n1-1, ncp = sqrt(n1)*parameters$mu )
+  # x_a = c(x,alpha)
+  tt <- function(x_a){
+    x_a[2] *
+      pt( f(x_a[1]), df = max(g(x_a[1])-1,1) , ncp = sqrt(g(x_a[1]))*parameters$mu ) *
+      dt( x_a[1], df=n1-1, ncp = sqrt(n1)*parameters$mu )
   }
-  p <- (h/2)*(t(alpha)%*%y)
+
+  y <- apply( cbind(x,alpha), 1, tt)
+  p <- (h/2) * sum(y)
   p <- p + pt( cf, df=n1-1, ncp = sqrt(n1)*parameters$mu )
   return(p)
 }

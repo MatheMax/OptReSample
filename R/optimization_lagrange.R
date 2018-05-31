@@ -10,6 +10,8 @@
 #' @param lambda2 Penalization parameter for type II error
 #'
 #' @return An object of class \code{design}
+#'
+#' @export
 
 
 lagrange_design <- function(parameters, lambda1, lambda2) {
