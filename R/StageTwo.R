@@ -112,7 +112,8 @@ type_two_smooth <- function(parameters, cf, c2, n1, n2, h, N, w){
   alpha <- c(1, rep(2,(N-1)), 1)
   # x = c(c2, n2, w, alpha)
   tt <- function(x) {
-    y <- x[4] * pnorm(x[1] - sqrt(abs(x[2])) * parameters$mu ) * dnorm(x[3] - sqrt(n1) * parameters$mu)
+    y <- x[4] * pnorm(x[1] - sqrt(abs(x[2])) * parameters$mu ) *
+         dnorm(x[3] - sqrt(n1) * parameters$mu)
     return(y)
   }
   y <- apply(cbind(c2,n2,w,alpha), 1, tt)

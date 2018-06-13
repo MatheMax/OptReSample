@@ -10,7 +10,7 @@
 #' @export
 
 cond_power<-function(z, d, parameters){
-  f <- 0
+  f <- ifelse(z > d$ce, 1, 0)
   if(d$cf <= z && z <= d$ce){
     f <- 1- pnorm( d$c2(z) - sqrt(d$n2(z)) * parameters$mu )
   }

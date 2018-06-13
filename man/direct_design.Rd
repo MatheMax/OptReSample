@@ -16,6 +16,8 @@ An object of class \link{design}.
 \code{direct_design} comuptes the optimal design via a spline approach.
 }
 \details{
-The z-space is partionated in a grid and the optimal c_2- and n_2 values are computed on every node.
-The function is truncated if z is not element of (c_f,c_e) and inside this interval, a spline function is fitted.
+The z-space is partionated in a grid and the optimal c_2- and n_2 values are computed
+on every node.
+The function is truncated if z is not element of (c_f,c_e) and inside this interval,
+a spline function is fitted.
 }

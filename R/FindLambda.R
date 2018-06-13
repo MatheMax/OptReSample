@@ -87,15 +87,15 @@ lambda_start <- function(parameters){
     l1 <- as.numeric( g(ratio) * l2 )
   }  else{
     g <- function(z) {
-      x = c(10,11,12)
-      y = c(11,10.5,6.6)
+      x = c(10, 11, 12, 13)
+      y = c(11, 10.5, 6.6, 6.6)
       q <- lm(y ~ x + I(x^2))
       p <- q$coefficients[1] + q$coefficients[2] * z + q$coefficients[3] * z^2
       return(p)
     }
     l1 <- as.numeric( g(ratio) * l2 )
   }
-  l1 <- max(l1, 10)
+  l1 <- max(l1, 2 * l2)
 
   return(c(l1, l2))
 

@@ -12,7 +12,7 @@ optimal_gsd <- function(parameters) {
   exp_n_gs<-function(parameters, cf, ce, n1, c2, n2){
     N=6
     h=(ce-cf)/(4*N)
-    x=nodes(cf,ce,N)
+    x=nodes(cf, ce, N)
     omega=rep(0,4*N+1)
     omega[1]=7
     w=c(32,12,32,14)
@@ -20,11 +20,11 @@ optimal_gsd <- function(parameters) {
     omega[4*N+1]=7
     y=rep(0,4*N+1)
     for(i in 1:(4*N+1)){
-      y[i] = n2 * dnorm( ( x[i] - sqrt(abs(n1)) * parameters$mu ) )
+      y[i] = n2 * dnorm( x[i] - sqrt(abs(n1)) * parameters$mu )
     }
-    p <- (2*h)/45*(t(omega)%*%y)
-    f <- n1 + p
-    return(f)
+    p <- (2*h) / 45 * (t(omega) %*% y)
+    p <- n1 + p
+    return(p)
   }
 
   # probability to reject

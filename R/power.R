@@ -11,29 +11,23 @@
 #' @export
 
 real_power<-function(effect, d, parameters){
-  mualt=effect #the true standardized effect size
+  # Define nodes
+  N = 6
+  h = (d$ce - d$cf) / (4 * N)
+  x = nodes(d$cf, d$ce, N)
+  omega = rep(0, 4 * N+1)
+  omega[1] = 7
+  w = c(32, 12, 32, 14)
+  omega[-1] = rep(w, N)
+  omega[4 * N+1] = 7
 
-  n1 <- d$n1
-  cf <- d$cf
-  ce <- d$ce
-
-  # Define nods
-  N=6
-  h=(ce-cf)/(4*N)
-  x=nodes(cf,ce,N)
-  omega=rep(0,4*N+1)
-  omega[1]=7
-  w=c(32,12,32,14)
-  omega[-1]=rep(w,N)
-  omega[4*N+1]=7
-  y=rep(0,4*N+1)
+  # Compute Power
+  y=rep(0, 4*N+1)
   for(i in 1:(4*N+1)){
-    n <- as.numeric(d$n2(x[i]))
-    c <- as.numeric(d$c2(x[i]))
-    y[i] = pnorm( c - sqrt(abs(n)) * mualt ) * dnorm( x[i] - sqrt(abs(n1)) * mualt )
+    y[i] = pnorm( d$c2(x[i]) - sqrt(d$n2(x[i])) * effect ) * dnorm( x[i] - sqrt(d$n1) * effect )
   }
   p <- (2*h)/45*(t(omega)%*%y)
-  f <- 1 - pnorm ( cf - sqrt(abs(n1)) * mualt ) - p
+  f <- 1 - pnorm ( d$cf - sqrt(d$n1) * effect ) - p
   return(f)
 }
 
