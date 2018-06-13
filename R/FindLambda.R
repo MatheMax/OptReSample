@@ -68,7 +68,7 @@ lambda_start <- function(parameters){
     l2 <- 2000 * parameters$alpha
   } else if( parameters$mu>0.3 ){
     l2 <- max( 150 - 1500 * parameters$alpha, 1)
-  } else if( parameters$mu>0.2 ){
+  } else if( parameters$mu>0.25 ){
     l2 <- max( 200 - 1500 * parameters$alpha, 1)
   } else{
     l2 <- max( 300 * ( 1 + (0.2 - parameters$mu) * 10 )^2, 1)
