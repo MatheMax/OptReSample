@@ -40,7 +40,7 @@ inverse_normal_design <- function(parameters){
     return(p)
    }
 
-
+  '
   # Type one error
   to_in <- function(n1, cf, ce){
     p <- 1 - pnorm(cf)
@@ -49,30 +49,40 @@ inverse_normal_design <- function(parameters){
     alph = c(1, rep(2, 9), 1)
 
     # z <- (z, alpha)
-    f <- function(z, al){ al * pnorm(c2_in(z,n1)) * dnorm(z) }
+    f <- function(z, al){ al * pnorm(c2_in(z, n1)) * dnorm(z) }
     y <- apply(cbind(ww, alph), 1, function(x) f(x[1], x[2]))
     p <-  p - (h/2) * sum(y)
     return(p)
 
   }
 
+  power_lack <- function(n1, cf, ce, lambda){
+    h = (ce - cf) / 10
+    ww = seq(cf, ce, h)
+
+    # Define type two error
+    f <- function(z, al){
+      al * pnorm(c2_in(z, n1) - sqrt(n2_in(z, n1, lambda)) * parameters$mu) * dnorm(z - sqrt(n1) * parameters$mu)
+    }
+    y <- apply(cbind(ww, alph), 1, function(x) f(x[1], x[2]))
+    p <- parameters$beta - (h/2) * sum(y) - pnorm(cf - sqrt(n1) * parameters$mu)
+    return(p)
+  }
+  '
 
 
   score_in <- function(n1, lambda){
 
-    #lambda_opt <- optimal_lambda(n1,ce)
-    lambda_opt <- lambda
-
     # z <- (z, alpha)
     f <- function(z, al){
-      q <- al * n2_in(z, n1, lambda_opt) * dnorm(z - sqrt(n1) * parameters$mu) +
-           al * lambda_opt * pnorm(c2_in(z, n1) - sqrt(n2_in(z, n1, lambda_opt)) * parameters$mu) *
+      q <- al * n2_in(z, n1, lambda) * dnorm(z - sqrt(n1) * parameters$mu) +
+           al * lambda * pnorm(c2_in(z, n1) - sqrt(n2_in(z, n1, lambda)) * parameters$mu) *
                     dnorm(z - sqrt(n1) * parameters$mu)
       return(q)
     }
     y <- apply(cbind(ww, alph), 1, function(x) f(x[1], x[2]))
     p <- (h/2) * sum(y)
-    p <- p + n1 + lambda_opt * ( pnorm(cf - sqrt(n1) * parameters$mu) - parameters$beta )
+    p <- p + n1 + lambda * ( pnorm(cf - sqrt(n1) * parameters$mu) - parameters$beta )
     return(p)
   }
 
@@ -80,8 +90,8 @@ inverse_normal_design <- function(parameters){
     optimum <- nloptr::nloptr(
       x0          = c(n_fixed/2),
       eval_f      = function(x) score_in(x, lambda),
-      lb = 0.1 * n_fixed,
-      ub = 0.9 * n_fixed,
+      lb = c(0.1 * n_fixed),
+      ub = c(0.9 * n_fixed),
       opts = list(
         algorithm = "NLOPT_LN_COBYLA",
         xtol_rel = 0.0001,
@@ -117,15 +127,17 @@ inverse_normal_design <- function(parameters){
 
   n1_out <- n1_in(lambda_opt)
 
-  n2_out <- function(z){ n2_in(z, n1_out, lambda_opt) }
+  n2_out2 <- function(z){ n2_in(z, n1_out, lambda_opt) }
   c2_out <- function(z){ c2_in(z, n1_out) }
 
   xx <- seq(cf, ce, 0.1)
-  n2_test <- sapply(xx, n2_out)
-  cf_out <-  max( xx[which.max(n2_test)] , cf)
-  ce_out <-  min( xx[max(which(n2_test > 0))], ce)
+  n2_test <- sapply(xx, n2_out2)
+  cf_out <-  max( xx[min(which(n2_test > 3))] , cf)
+  ce_out <-  min( xx[max(which(n2_test > 3))], ce)
 
-
+  n2_out <- function(z){
+    ifelse(cf_out <= z && z <= ce_out, n2_out2(z), 0)
+  }
   d <- design(cf_out, ce_out, n1_out, n2_out, c2_out)
   return(d)
 

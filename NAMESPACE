@@ -3,6 +3,7 @@
 export(b)
 export(c_early)
 export(cond_power)
+export(cond_power_design)
 export(d_ce)
 export(d_cf)
 export(design)
