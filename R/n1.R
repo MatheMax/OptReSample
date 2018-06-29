@@ -26,5 +26,5 @@ n1 <- function(parameters, lambda1, lambda2){
     )
   )
 
-  return(opt$solution[1])
+  return(round(opt$solution[1]))
 }

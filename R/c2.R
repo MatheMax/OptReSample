@@ -12,7 +12,7 @@
 #'   @export
 
 c2 <- function(parameters, z, n1, lambda1, lambda2, cf, ce){
-  n2 <- response(parameters, n1, lambda1, lambda2, z)
+  n2 <- round(response(parameters, n1, lambda1, lambda2, z))
   q <- ( parameters$mu^2 * n2 - b(parameters, z, n1, lambda1, lambda2) ) / ( 2 * parameters$mu * sqrt(n2) )
 
   if(z<cf) {

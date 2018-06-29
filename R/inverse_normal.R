@@ -72,11 +72,11 @@ inverse_normal_design <- function(parameters){
 
 
   score_in <- function(n1, lambda){
-
     # z <- (z, alpha)
     f <- function(z, al){
-      q <- al * n2_in(z, n1, lambda) * dnorm(z - sqrt(n1) * parameters$mu) +
-           al * lambda * pnorm(c2_in(z, n1) - sqrt(n2_in(z, n1, lambda)) * parameters$mu) *
+      n2 <- round(n2_in(z, n1, lambda))
+            q <- al * n2 * dnorm(z - sqrt(n1) * parameters$mu) +
+           al * lambda * pnorm(c2_in(z, n1) - sqrt(n2) * parameters$mu) *
                     dnorm(z - sqrt(n1) * parameters$mu)
       return(q)
     }
@@ -125,7 +125,7 @@ inverse_normal_design <- function(parameters){
 
   lambda_opt <- ceiling(optimal_lambda(parameters))
 
-  n1_out <- n1_in(lambda_opt)
+  n1_out <- round(n1_in(lambda_opt))
 
   n2_out2 <- function(z){ n2_in(z, n1_out, lambda_opt) }
   c2_out <- function(z){ c2_in(z, n1_out) }
