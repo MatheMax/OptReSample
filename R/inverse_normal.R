@@ -132,8 +132,8 @@ inverse_normal_design <- function(parameters){
 
   xx <- seq(cf, ce, 0.01)
   n2_test <- sapply(xx, n2_out2)
-  cf_out <-  max( xx[min(which(n2_test > 3))] , cf)
-  ce_out <-  min( xx[max(which(n2_test > 3))], ce)
+  cf_out <-  max( xx[min(which(n2_test > 5))] , cf)
+  ce_out <-  min( xx[max(which(n2_test > 5))], ce)
 
   n2_out <- function(z){
     ifelse(cf_out <= z && z <= ce_out, n2_out2(z), 0)

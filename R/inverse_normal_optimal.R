@@ -55,14 +55,20 @@ optimal_inverse_normal_design <- function(parameters){
 
   to_in <- function(n1, cf, ce, w){
     p <- 1 - pnorm(cf)
-    h = (ce - cf) / 10
-    ww = seq(cf, ce, h)
-    alph = c(1, rep(2, 9), 1)
+    N = 10
+    h = (ce-cf)/(4*N)
+    ww = nodes(cf,ce,N)
 
-    # z <- (z, alpha)
-    f <- function(z, al){ al * pnorm(c2_in(z, w)) * dnorm(z) }
-    y <- apply(cbind(ww, alph), 1, function(x) f(x[1], x[2]))
-    p <-  p - (h/2) * sum(y)
+    omega = rep(0,4*N+1)
+    omega[1] = 7
+    wei = c(32, 12, 32, 14)
+    omega[-1] = rep(wei, N)
+    omega[4*N+1] = 7
+
+    # z <- (z, omega)
+    f <- function(z, om){ om * pnorm(c2_in(z, w)) * dnorm(z) }
+    y <- apply(cbind(ww, omega), 1, function(x) f(x[1], x[2]))
+    p <-  p - (2*h)/45 * sum(y)
     return(p)
 
   }
