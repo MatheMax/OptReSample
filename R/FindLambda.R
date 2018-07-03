@@ -20,27 +20,34 @@ err <- function(parameters, lambda1, lambda2) {
   cf <- c[1]
   ce <- c[2]
 
-  dis = (ce - cf)
-  h = dis/10
-  x = seq(cf, ce, h)
-  alpha = c(1, rep(2, 9), 1)
 
-  yy <- function(x, parameters.=parameters, n1.=n1, lambda1.=lambda1, lambda2.=lambda2){
-    n2 <-  response(parameters., n1., lambda1., lambda2., x)
-    c2 <- ( parameters.$mu^2 * n2 - b(parameters., x, n1., lambda1., lambda2.) ) / ( 2 * parameters.$mu * sqrt(abs(n2)) )
+  N = 10
+  h = (ce-cf)/(4*N)
+  ww = nodes(cf,ce,N)
 
-    y1 = pnorm( c2 ) * dnorm( x )
-    y2 = pnorm( c2 - sqrt(abs(n2)) * parameters.$mu) * dnorm( x - sqrt(n1.) * parameters.$mu )
+  omega = rep(0,4*N+1)
+  omega[1] = 7
+  wei = c(32, 12, 32, 14)
+  omega[-1] = rep(wei, N)
+  omega[4*N+1] = 7
+
+
+  yy <- function(x, om){
+    n2 <-  response(parameters, n1, lambda1, lambda2, x)
+    c2 <- ( parameters$mu^2 * n2 - b(parameters, x, n1, lambda1, lambda2) ) / ( 2 * parameters$mu * sqrt(abs(n2)) )
+
+    y1 = om * pnorm( c2 ) * dnorm( x )
+    y2 = om * pnorm( c2 - sqrt(abs(n2)) * parameters$mu) * dnorm( x - sqrt(n1) * parameters$mu )
 
     return(c(y1,y2))
   }
 
-  y <- sapply(x,yy)
+  y <- sapply(ww, yy)
 
-  q <- (h/2)*(t(alpha) %*% y[2,])
+  q <- (2*h)/45 * sum(y[2,])
   q <- 1 - pnorm ( cf - sqrt( n1 ) * parameters$mu ) - q
 
-  p <- (h/2)*(t(alpha) %*% y[1,])
+  p <- (2*h)/45 * sum(y[1,])
   p <- 1 - pnorm(cf) - p
 
   g <- ( p - parameters$alpha )
