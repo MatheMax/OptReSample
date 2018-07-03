@@ -42,7 +42,7 @@ err <- function(parameters, lambda1, lambda2) {
     return(c(y1,y2))
   }
 
-  y <- sapply(ww, yy)
+  y <- apply(cbind(ww,omega), 1, function(x) yy(x[1], x[2]))
 
   q <- (2*h)/45 * sum(y[2,])
   q <- 1 - pnorm ( cf - sqrt( n1 ) * parameters$mu ) - q
@@ -125,9 +125,9 @@ find_lambda <- function(parameters){
   l <- lambda_start(parameters)
 
   err_opt<-function(lambda1, lambda2){err(parameters, lambda1, lambda2)}
-  opt <- rootSolve::multiroot(function(x) err_opt(x[1], x[2]), c(l[1], l[2]), atol=c(0.01,0.01))
+  opt <- rootSolve::multiroot(function(x) err_opt(x[1], x[2]), c(l[1], l[2]), atol=c(0.001,0.001))
 
-  return(ceiling(opt$root))
+  return(opt$root)
 }
 
 

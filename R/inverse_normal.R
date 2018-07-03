@@ -123,7 +123,7 @@ inverse_normal_design <- function(parameters){
 
   }
 
-  lambda_opt <- ceiling(optimal_lambda(parameters))
+  lambda_opt <- optimal_lambda(parameters)
 
   n1_out <- round(n1_in(lambda_opt))
 

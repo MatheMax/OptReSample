@@ -117,12 +117,12 @@ optimal_inverse_normal_design <- function(parameters){
       p <- parameters$beta - (h/2) * sum(y) - pnorm(cf - sqrt(n1) * parameters$mu)
       return(p)
     }
-    lam <- try(uniroot(power_lack, c(10, 20000), extendInt="yes")$root, silent=T)
+    lam <- try(uniroot(power_lack, c(10, 20000), extendInt="yes", tol=0.001)$root, silent=T)
     if(class(lam)=="try-error"){ lam = 999999 }
     return(as.numeric(lam))
   }
 
-  lambda_opt <- ceiling(optimal_lambda(parameters))
+  lambda_opt <- optimal_lambda(parameters)
 
   fs <- first_stage_in(lambda_opt)
   n1 <- round(fs[1])
