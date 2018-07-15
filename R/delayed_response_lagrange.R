@@ -7,6 +7,8 @@
 #' @param alpha Type one error rate
 #' @param beta Type two error rate
 #'
+#' @return An object of class design
+#'
 #' @export
 
 lagrange_dr_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
