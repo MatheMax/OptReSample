@@ -46,5 +46,3 @@ omega <- function(N){
   return(omega)
 }
 
-
-

@@ -9,8 +9,8 @@ dr_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
   N <- (length(w) - 1 ) /4
   h <- (max(w) - min(w)) / (4*N)
   omega = rep(0,4*N+1)
-  omega[1] =7
-  se =c(32,12,32,14)
+  omega[1] = 7
+  se = c(32,12,32,14)
   omega[-1] = rep(se,N)
   omega[4*N+1] = 7
 

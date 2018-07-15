@@ -70,6 +70,7 @@ jt_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
       lambda_opt <- optimum$solution[1]
 '
       lambda_opt <- 8 * sigma^2
+
       # Define design
       n2 <- rep(0,length(x))
       for(i in 1:length(x)){
@@ -148,7 +149,7 @@ jt_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
       )
       n1_out <- optimum$solution[1]
 
-            # Define c2
+      # Define c2
       c2_out <- function(z){ c2_jt(z, n1_out) }
 
       # Define n2

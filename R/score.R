@@ -23,12 +23,12 @@ score <- function( parameters, cf, ce, n1, lambda1, lambda2 ) {
   omega[-1] = rep( w, N )
   omega[4*N+1] = 7
 
-  sc <- function(x, parameters_=parameters, cf_=cf, ce_=ce, n1_=n1, lambda1_=lambda1, lambda2_=lambda2) {
-    n <- response( parameters_, n1_, lambda1_, lambda2_, x )
-    c <- ( parameters_$mu^2 * n - b( parameters_, x, n1_, lambda1_, lambda2_ ) ) / ( 2 * parameters_$mu * sqrt(n) )
-    y <- n * dnorm( x - parameters_$mu * sqrt(n1_) )
-    y <- y - ( lambda1_ * pnorm(c) * dnorm(x) )
-    y <- y + ( lambda2_ * pnorm( c - parameters_$mu * sqrt(n) ) * dnorm( x - parameters_$mu * sqrt(n1_) ) )
+  sc <- function(x) {
+    n <- response( parameters, n1, lambda1, lambda2, x )
+    c <- ( parameters$mu^2 * n - b( parameters, x, n1, lambda1, lambda2) ) / (2 * parameters$mu * sqrt(n))
+    y <- n * dnorm( x - parameters$mu * sqrt(n1) )
+    y <- y - ( lambda1 * pnorm(c) * dnorm(x) )
+    y <- y + ( lambda2 * pnorm( c - parameters$mu * sqrt(n) ) * dnorm( x - parameters$mu * sqrt(n1)))
     return(y)
   }
 
