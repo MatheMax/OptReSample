@@ -20,7 +20,7 @@ jt_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
   # Standardize effect
   th <- theta / sqrt(2) / sigma
   n_fixed <- fixed(list(alpha=alpha, beta=beta, mu=th))[1]
-  x <- seq(-1, 4, 0.1)
+  x <- seq(-1, 4, 0.01)
 
   # lb_n2 > 0, n1 predefined
     if(is.numeric(n1)){
@@ -39,13 +39,7 @@ jt_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
         return(as.numeric(res))
       }
 
-      # Find optimal lambda
-      # Define objective criterion
-      oc <- function(lambda){
-        f <- function(z){ (n_2_test(z,lambda) - lb_n2) * dnorm(z - sqrt(n1) * th) }
-        p <- integrate(Vectorize(f), -Inf, Inf)$value
-        return(p)
-      }
+      # Find  lambda
       # Define power
       pow <- function(lambda){
         cp <- function(z){ 1 - pnorm( c2_jt(z) - sqrt(n_2_test(z, lambda)) * th ) }
@@ -53,32 +47,19 @@ jt_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
         p <- integrate(Vectorize(g), -Inf, Inf)$value
         return(p)
       }
-  '
-      optimum <- nloptr::nloptr(
-        x0          = max(8 * sigma^2, 400),
-        eval_f      = function(x) oc(x),
-        eval_g_ineq = function(x) {1 - beta - pow(x)},
-        lb = 0.1,
-        ub = Inf,
-        opts = list(
-          algorithm = "NLOPT_LN_COBYLA",
-          xtol_rel = 0.0001,
-          maxeval = 999999,
-          maxtime = 16200
-        )
-      )
-      lambda_opt <- optimum$solution[1]
-'
-      lambda_opt <- 8 * sigma^2
 
-      # Define design
-      n2 <- rep(0,length(x))
-      for(i in 1:length(x)){
-        n2[i] <- n_2_test(x[i], lambda_opt)
-      }
+    #lambda_opt <- 8 * sigma^2
+    #while(pow(lambda_opt) < 1 - beta){lambda_opt <- lambda_opt + 1}
+    lambda_opt <- 463
 
-      n1_out <- n1
-      c2_out <- c2_jt
+     # Define design
+     n2 <- rep(0,length(x))
+     for(i in 1:length(x)){
+       n2[i] <- n_2_test(x[i], lambda_opt)
+     }
+
+     n1_out <- n1
+     c2_out <- c2_jt
 
     } else{
     # lb_n2 > 0 , n1 optimized
@@ -103,7 +84,7 @@ jt_design <- function(theta, sigma, n1=NA, lb_n2, alpha, beta){
       # Define objective criterion
       oc <- function(n1, lambda){
         f <- function(z){ (n_2_test(z, n1, lambda) - lb_n2) * dnorm(z - sqrt(n1) * th) }
-        p <- integrate(Vectorize(f), -Inf, Inf)$value + n1
+        p <- integrate(Vectorize(f), -Inf, Inf)$value + n1 + lb_n2
         return(p)
       }
       # Define power
